@@ -1,0 +1,111 @@
+#!/usr/bin/python3
+
+import argparse
+import os
+import pwd
+import shutil
+import subprocess
+from urllib.parse import urljoin
+
+import attr
+from discord_webhook import DiscordEmbed, DiscordWebhook
+import toml
+
+max_discord_embeds = 10
+
+@attr.s
+class Package:
+	name = attr.ib()
+	version = attr.ib()
+	arch = attr.ib()
+
+	@property
+	def arch_pkgver(self):
+		return self.name + '-' + self.version + '.' + self.arch
+
+	@property
+	def xbps_file(self):
+		return self.arch_pkgver + '.xbps'
+
+def split_chunks(l, k):
+	c = []
+	for item in l:
+		c.append(item)
+		if len(c) == k:
+			yield c
+			c.clear()
+		else:
+			assert len(c) < k
+	if c:
+		yield c
+
+def main(args):
+	conf = toml.load('/etc/approve-distro.toml')
+	secret = toml.load('/etc/approve-distro.secret.toml')
+
+	pkgs = []
+	for pkgstr in args.pkgs:
+		if pkgstr.endswith('.xbps'):
+			pkgstr = pkgstr[:-5]
+		(pkgver, _, arch) = pkgstr.rpartition('.')
+		(name, _, version) = pkgver.rpartition('-')
+		pkgs.append(Package(name=name, version=version, arch=arch))
+
+	# Build the signer name.
+	try:
+		pent = pwd.getpwnam(args.maintainer)
+	except:
+		raise RuntimeError("UNIX user {} does not exist".format(args.maintainer))
+	if pent.pw_uid not in os.getresuid():
+		raise RuntimeError("Not logged in as {}".format(args.maintainer))
+
+	realname = pent.pw_gecos.split(',')[0]
+	email = pent.pw_name + '@' + conf['general']['email_domain']
+
+	print("You are about to publish {}\n"
+		"Signed-off by: {} <{}>".format(', '.join(pkg.arch_pkgver for pkg in pkgs), realname, email))
+
+	while True:
+		yn = input("Continue? [yes/no] ")
+		if yn in ['y', 'yes']:
+			break
+		elif yn in ['n', 'no']:
+			return
+
+	for pkg in pkgs:
+		# Copy the file.
+		src_path = os.path.join(conf['repositories']['source'], pkg.xbps_file)
+		dest_path = os.path.join(conf['repositories']['distro_path'], pkg.xbps_file)
+		shutil.copyfile(src_path, dest_path)
+
+	# Update the repository.
+	all_dest_paths = [os.path.join(conf['repositories']['distro_path'], pkg.xbps_file) for pkg in pkgs];
+	subprocess.check_call(['xbps-rindex', '-a'] + all_dest_paths)
+	subprocess.check_call(['xbps-rindex',
+			'--signedby', conf['repositories']['signer'],
+			'--privkey', conf['repositories']['private_key'],
+			'-s', conf['repositories']['distro_path']])
+	subprocess.check_call(['xbps-rindex',
+			'--privkey', conf['repositories']['private_key'],
+			'-S'] + all_dest_paths)
+
+	# Send a webhook.
+	for some_pkgs in split_chunks(pkgs, max_discord_embeds):
+		webhook = DiscordWebhook(url=secret['discord_hook']['webhook_url'])
+
+		for pkg in some_pkgs:
+			pkg_url = urljoin(conf['repositories']['distro_url'], pkg.xbps_file)
+			title='Package updated: {} is now at {}'.format(pkg.name, pkg.version)
+			embed = DiscordEmbed(title=title, url=pkg_url)
+			embed.set_timestamp()
+			embed.set_author(name=realname)
+			embed.add_embed_field(name='Architecture', value='x86_64')
+			embed.add_embed_field(name='Maintainer email', value=email)
+			webhook.add_embed(embed)
+
+		response = webhook.execute()
+
+parser = argparse.ArgumentParser()
+parser.add_argument('pkgs', type=str, nargs='+')
+parser.add_argument('-m', '--maintainer', type=str, required=True)
+main(parser.parse_args())
