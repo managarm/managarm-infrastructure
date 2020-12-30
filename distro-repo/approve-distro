@@ -13,6 +13,9 @@ import toml
 
 max_discord_embeds = 10
 
+maintainer = os.getenv("SUDO_USER")
+invoker = int(os.getenv("SUDO_UID", "-1"))
+
 @attr.s
 class Package:
 	name = attr.ib()
@@ -53,11 +56,11 @@ def main(args):
 
 	# Build the signer name.
 	try:
-		pent = pwd.getpwnam(args.maintainer)
+		pent = pwd.getpwnam(maintainer)
 	except:
-		raise RuntimeError("UNIX user {} does not exist".format(args.maintainer))
-	if pent.pw_uid not in os.getresuid():
-		raise RuntimeError("Not logged in as {}".format(args.maintainer))
+		raise RuntimeError("UNIX user {} does not exist".format(maintainer))
+	if pent.pw_uid != invoker:
+		raise RuntimeError("Not logged in as {}".format(maintainer))
 
 	realname = pent.pw_gecos.split(',')[0]
 	email = pent.pw_name + '@' + conf['general']['email_domain']
@@ -105,10 +108,6 @@ def main(args):
 
 		response = webhook.execute()
 
-maintainer = os.getenv("SUDO_USER")
-
 parser = argparse.ArgumentParser()
 parser.add_argument('pkgs', type=str, nargs='+')
-parser.add_argument('-m', '--maintainer', type=str,
-			required=not bool(maintainer), default=maintainer)
 main(parser.parse_args())
