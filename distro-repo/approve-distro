@@ -1,4 +1,35 @@
 #!/usr/bin/env python3
+"""
+promotes packages from an unstable to a stable repository, and notifies over
+webhooks about it
+
+approve-distro uses two configuration files:
+1. /etc/approve-distro.toml, containing::
+
+    [general]
+    email_domain = "managarm.org"
+
+    [repositories]
+    signer = "The Managarm Project <info@managarm.org>"
+    source = "/var/xbbs/projects/managarm/rolling/package_repo/"
+    distro_path = "/var/www/pkgs/repos/amd64"
+    distro_url = "https://pkgs.managarm.org/repos/amd64/"
+    private_key = "private_key.pem"
+
+2. /etc/approve-distro.secret.toml, containing::
+
+    [discord_hook]
+    webhook_url = "etc"
+
+approve-distro is intended to be launched via sudo. to prevent abuse, the
+installed approve-distro script should be owned by the ``distribution`` user
+and under mode 744, with a convenience alias in /etc/bash.bashrc and a sudoers
+entry::
+
+    %maintainers ALL=(distribution) NOSETENV: /usr/local/bin/approve-distro
+
+    alias approve-distro="sudo -u distribution approve-distro"
+"""
 
 import argparse
 import os
