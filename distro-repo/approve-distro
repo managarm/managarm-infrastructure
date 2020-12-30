@@ -1,4 +1,35 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+"""
+promotes packages from an unstable to a stable repository, and notifies over
+webhooks about it
+
+approve-distro uses two configuration files:
+1. /etc/approve-distro.toml, containing::
+
+    [general]
+    email_domain = "managarm.org"
+
+    [repositories]
+    signer = "The Managarm Project <info@managarm.org>"
+    source = "/var/xbbs/projects/managarm/rolling/package_repo/"
+    distro_path = "/var/www/pkgs/repos/amd64"
+    distro_url = "https://pkgs.managarm.org/repos/amd64/"
+    private_key = "private_key.pem"
+
+2. /etc/approve-distro.secret.toml, containing::
+
+    [discord_hook]
+    webhook_url = "etc"
+
+approve-distro is intended to be launched via sudo. to prevent abuse, the
+installed approve-distro script should be owned by the ``distribution`` user
+and under mode 744, with a convenience alias in /etc/bash.bashrc and a sudoers
+entry::
+
+    %maintainers ALL=(distribution) NOSETENV: /usr/local/bin/approve-distro
+
+    alias approve-distro="sudo -u distribution approve-distro"
+"""
 
 import argparse
 import os
@@ -12,6 +43,9 @@ from discord_webhook import DiscordEmbed, DiscordWebhook
 import toml
 
 max_discord_embeds = 10
+
+maintainer = os.getenv("SUDO_USER")
+invoker = int(os.getenv("SUDO_UID", "-1"))
 
 @attr.s
 class Package:
@@ -53,11 +87,11 @@ def main(args):
 
 	# Build the signer name.
 	try:
-		pent = pwd.getpwnam(args.maintainer)
+		pent = pwd.getpwnam(maintainer)
 	except:
-		raise RuntimeError("UNIX user {} does not exist".format(args.maintainer))
-	if pent.pw_uid not in os.getresuid():
-		raise RuntimeError("Not logged in as {}".format(args.maintainer))
+		raise RuntimeError("UNIX user {} does not exist".format(maintainer))
+	if pent.pw_uid != invoker:
+		raise RuntimeError("Not logged in as {}".format(maintainer))
 
 	realname = pent.pw_gecos.split(',')[0]
 	email = pent.pw_name + '@' + conf['general']['email_domain']
@@ -107,5 +141,4 @@ def main(args):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('pkgs', type=str, nargs='+')
-parser.add_argument('-m', '--maintainer', type=str, required=True)
 main(parser.parse_args())
