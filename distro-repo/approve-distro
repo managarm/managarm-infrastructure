@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import argparse
 import os
@@ -105,7 +105,10 @@ def main(args):
 
 		response = webhook.execute()
 
+maintainer = os.getenv("SUDO_USER")
+
 parser = argparse.ArgumentParser()
 parser.add_argument('pkgs', type=str, nargs='+')
-parser.add_argument('-m', '--maintainer', type=str, required=True)
+parser.add_argument('-m', '--maintainer', type=str,
+			required=not bool(maintainer), default=maintainer)
 main(parser.parse_args())
