@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+_approve_distro_completions_present() {
+	local x
+	for x in "${COMP_WORDS[@]}"; do
+		if [ "$x" == "$1" ]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+_approve_distro_completions() {
+	local x
+	options=""
+	src="$(python3 -c '
+import toml
+with open("/etc/approve-distro.toml", "r") as f:
+	print(toml.load(f).get("repositories", {}).get("source", ""))
+')"
+	for x in "-h" "$src"/*.xbps; do
+		x="${x##*/}"
+		x="${x%.xbps}"
+		if ! _approve_distro_completions_present "$x"; then
+			options="$options $x"
+		fi
+	done
+	COMPREPLY+=($(compgen -W "${options# }" -- "${COMP_WORDS[${COMP_CWORD}]}"))
+	return
+}
+
+complete -F _approve_distro_completions approve-distro
