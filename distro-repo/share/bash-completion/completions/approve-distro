@@ -12,18 +12,28 @@ _approve_distro_completions_present() {
 _approve_distro_completions() {
 	local x
 	options=""
-	src="$(python3 -c '
+	src=
+	dst=
+	eval "$(python3 -c '
 import toml
+import shlex
+
 with open("/etc/approve-distro.toml", "r") as f:
-	print(toml.load(f).get("repositories", {}).get("source", ""))
+	repos = toml.load(f).get("repositories", {})
+	print("src=" + shlex.quote(repos.get("source", "")))
+	print("dst=" + shlex.quote(repos.get("distro_path", "")))
 ')"
+	[ "$src" ] || return
 	for x in "-h" "$src"/*.xbps; do
 		x="${x##*/}"
 		x="${x%.xbps}"
-		if ! _approve_distro_completions_present "$x"; then
+		if ! _approve_distro_completions_present "$x" \
+			&& ! [ -e "${dst}/${x}.xbps" ]
+		then
 			options="$options $x"
 		fi
 	done
+	# shellcheck disable=SC2207
 	COMPREPLY+=($(compgen -W "${options# }" -- "${COMP_WORDS[${COMP_CWORD}]}"))
 	return
 }
