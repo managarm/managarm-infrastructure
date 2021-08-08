@@ -1,0 +1,10 @@
+---
+- name: Install kernel postinst hook
+  become: yes
+  ansible.builtin.template:
+    src: 'zz-readable-kernel.j2'
+    dest: '/etc/kernel/postinst.d/zz-readable-kernel'
+    mode: 0755
+  notify: make_kernels_readable
+
+# vim: sw=2 et :

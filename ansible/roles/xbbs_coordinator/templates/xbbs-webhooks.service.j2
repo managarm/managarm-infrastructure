@@ -1,0 +1,11 @@
+[Unit]
+Description=xbbs webhooks handler
+Before=nginx.service
+
+[Service]
+User=xbbs
+Group=xbbs
+ExecStart=/usr/local/bin/gunicorn -k gevent -b {{ xbbs_cfg.webhook_bind }} xbbs.webhooks:app
+
+[Install]
+WantedBy=default.target

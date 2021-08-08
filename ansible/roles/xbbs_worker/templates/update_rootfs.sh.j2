@@ -1,0 +1,34 @@
+#!/bin/sh
+# {{ ansible_managed }}
+
+redownload() {
+	curl -LO https://repos.managarm.org/buildenv/managarm-buildenv.tar.gz
+}
+
+set -xe
+xbhome={{ xbbs_cfg.xbstrap_home | quote }}
+cd "$xbhome"
+mkdir -p dls
+cd dls
+curl -LO https://repos.managarm.org/buildenv/managarm-buildenv.sum
+
+# if the thing fails to check, redownload, if that works but the sum is still
+# wrong, retry
+attempt=0
+until sha256sum -c managarm-buildenv.sum; do
+	sleep "$attempt"
+	if [ "$attempt" -gt 2 ]; then
+		printf '%s\n' 'failed to download'
+		exit 1
+	fi
+	redownload
+	: "$((attempt+=1))"
+done
+
+cd /var/lib/cbuildrt
+if tar df "$xbhome"/dls/managarm-buildenv.tar.gz \
+	--xform='s/^rootfs/managarm-buildenv/' 2>&1 \
+	| grep -v ': [UG]id differs$'; then  # detect any non-ownership diffs
+	tar xf "$xbhome"/dls/managarm-buildenv.tar.gz \
+		--xform='s/^rootfs/managarm-buildenv/' -p
+fi

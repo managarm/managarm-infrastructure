@@ -1,0 +1,9 @@
+---
+- name: Install chrony
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg: chrony
+  notify: chrony
+
+# vim: sw=2 et :

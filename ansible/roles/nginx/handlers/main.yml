@@ -1,0 +1,20 @@
+---
+- name: nginx
+  become: yes
+  become_user: root
+  ansible.builtin.systemd:
+    unit: nginx
+    state: reloaded
+    enabled: yes
+
+- name: run_acme_once
+  become: yes
+  become_user: acme
+  ansible.builtin.command:
+    chdir: /var/lib/acme
+    argv:
+      - /var/lib/acme/update_certs.sh
+      - '{{ item }}'
+    creates: '/var/lib/acme/certs/{{ item }}/certificate.pem'
+  loop: '{{ acme_domains }}'
+# vim: sw=2 et :

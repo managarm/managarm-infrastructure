@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+{% import 'nginx_macros.j2' as h %}
+server {
+	listen 443 ssl http2;
+	server_name repos.managarm.org;
+
+#location /tools/ {
+#       autoindex on;
+#       root /var/xbbs/projects/managarm/tool_repo/;
+#}
+
+	autoindex on;
+	root /var/www/repos;
+
+	{{ h.ssl_keys("repos.managarm.org") }}
+}

@@ -1,0 +1,10 @@
+---
+rsyncd_port: 8733
+rsyncd_address: 127.0.0.1
+rsyncd_uid: www-data
+rsyncd_gid: www-data
+rsyncd_haproxy_protocol: yes
+rsyncd_modules: []
+rsyncd_motd: "Welcome to our rsync server"
+
+# vim: sw=2 et :

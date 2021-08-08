@@ -1,0 +1,106 @@
+---
+- name: Install acme-tiny
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg: acme-tiny
+
+- name: Create acme user
+  become: yes
+  become_user: root
+  ansible.builtin.user:
+    name: acme
+    comment: acme_tiny user
+    group: www-data  # nginx is the primary program to access these
+    system: yes
+    home: '/var/lib/acme/'
+    password: '!'
+    password_lock: yes
+
+- name: Create certificates directory
+  become: yes
+  become_user: acme
+  ansible.builtin.file:
+    state: directory
+    path: '/var/lib/acme/certs/{{ item }}'
+    recurse: yes
+    owner: acme
+    group: www-data
+  loop: "{{ acme_domains }}"
+
+- name: Create challenge directory
+  become: yes
+  become_user: acme
+  ansible.builtin.file:
+    state: directory
+    path: '/var/lib/acme/challenges'
+    owner: acme
+    group: www-data
+    mode: 0750
+
+
+- name: Copy account key
+  become: yes
+  become_user: acme
+  ansible.builtin.copy:
+    dest: '/var/lib/acme/account_key.pem'
+    src: 'secrets/tls/account_key.pem'
+    owner: acme
+    group: www-data
+    mode: 0600
+
+- name: Copy private keys
+  become: yes
+  become_user: acme
+  ansible.builtin.copy:
+    dest: '/var/lib/acme/certs/{{ item }}/privkey.pem'
+    src: 'secrets/tls/{{ item }}/privkey.pem'
+    owner: acme
+    group: www-data
+    mode: 0640
+  loop: "{{ acme_domains }}"
+
+- name: Copy CSRs
+  become: yes
+  become_user: acme
+  ansible.builtin.copy:
+    dest: '/var/lib/acme/certs/{{ item }}/csr.pem'
+    src: 'secrets/tls/{{ item }}/csr.pem'
+    owner: acme
+    group: www-data
+    mode: 0600
+  loop: "{{ acme_domains }}"
+
+- name: Create cronjob helper
+  become: yes
+  become_user: acme
+  ansible.builtin.template:
+    dest: '/var/lib/acme/update_certs.sh'
+    src: 'update_certs.sh.j2'
+    owner: acme
+    group: www-data
+    mode: 0744
+
+- name: Create helper sudoers
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    dest: '/etc/sudoers.d/acme'
+    src: 'acme_sudoers.j2'
+    owner: root
+    group: root
+    mode: 0640
+    validate: /usr/sbin/visudo -cf %s
+
+- name: Add ACME cronjob
+  become: yes
+  become_user: acme
+  ansible.builtin.cron:
+    name: 'acme_update_certs'
+    minute: '0'
+    hour: '0'
+    dom: '1'
+    job: 'chronic /var/lib/acme/update_certs.sh'
+
+
+# vim: sw=2 et :

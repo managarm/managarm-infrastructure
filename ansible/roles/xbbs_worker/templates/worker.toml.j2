@@ -1,0 +1,4 @@
+job_endpoint = "{{ xbbs_cfg.job_endpoint }}"
+capabilities = [{{ '"kvm",' if ansible_facts.has_kvm }} {{'"fuse"' if ansible_facts.has_fuse }}]
+
+# vim: ft=toml :

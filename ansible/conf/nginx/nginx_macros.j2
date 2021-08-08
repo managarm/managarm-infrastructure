@@ -1,0 +1,5 @@
+{%- macro ssl_keys(domain) -%}
+	ssl_certificate /var/lib/acme/certs/{{ domain }}/certificate.pem;
+	ssl_certificate_key /var/lib/acme/certs/{{ domain }}/privkey.pem;
+{%- endmacro -%}
+# vim: ft=htmldjango :

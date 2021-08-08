@@ -1,0 +1,10 @@
+---
+- name: wireguard
+  become: yes
+  become_user: root
+  ansible.builtin.systemd:
+    name: wg-quick@wg-managarm0
+    enabled: yes
+    state: reloaded
+
+# vim: sw=2 et :

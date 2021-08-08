@@ -1,0 +1,139 @@
+---
+- name: Install xbstrap and xbbs from git
+  become: yes
+  become_user: root
+  ansible.builtin.pip:
+    state: latest
+    name:
+      - git+https://github.com/managarm/xbstrap.git
+      - git+https://github.com/managarm/xbbs.git
+  notify: xbbs_coordinator_services
+
+- name: Generate coordinator configuration
+  become: true
+  become_user: xbbs
+  ansible.builtin.template:
+    mode: 0644
+    src: "coordinator.toml.j2"
+    dest: "/etc/xbbs/coordinator.toml"
+  notify: xbbs_coordinator_services
+
+- name: Generate webhook configuration
+  become: true
+  become_user: xbbs
+  ansible.builtin.template:
+    owner: xbbs
+    group: xbbs
+    mode: 0640
+    src: "webhooks.toml.j2"
+    dest: "/etc/xbbs/webhooks.toml"
+  notify: xbbs_coordinator_services
+
+- name: Install systemd service files
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: "xbbs-{{ item }}.service.j2"
+    dest: "/etc/systemd/system/xbbs-{{ item }}.service"
+    owner: root
+    group: root
+    mode: 0644
+  loop: ["coordinator", "web", "webhooks"]
+  notify: xbbs_coordinator_services
+
+- name: Make xbbs home
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "/var/lib/xbbs"
+    state: directory
+    mode: 0755
+    owner: xbbs
+    group: xbbs
+
+- name: Make project directories
+  become: true
+  become_user: xbbs
+  ansible.builtin.file:
+    path: "/var/lib/xbbs/projects/{{ item.key }}/"
+    state: directory
+    owner: xbbs
+    group: xbbs
+    mode: 0755
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+
+- name: Copy signing public key
+  become: true
+  become_user: xbbs
+  ansible.builtin.copy:
+    src: secrets/xbbs/{{ item.value }}.plist
+    dest: "/var/lib/xbbs/projects/{{ item.key }}/{{ item.value }}.plist"
+    owner: xbbs
+    group: xbbs
+    mode: 0644
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+
+- name: Copy signing private key
+  become: true
+  become_user: xbbs
+  ansible.builtin.copy:
+    src: secrets/xbbs/{{ item.value }}.rsa
+    dest: "/var/lib/xbbs/projects/{{ item.key }}/{{ item.value }}.rsa"
+    owner: xbbs
+    group: xbbs
+    mode: 0600
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+
+
+- name: Create web directory structure
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    state: directory
+    path: '/var/www/{{ item }}'
+    owner: www-data
+    group: www-data
+    mode: 0755
+  loop:
+    - docs
+    - docs/handbook
+    - docs/hel-api
+    - mirrors
+    - repos
+    - repos/pinned
+    - repos/cbuildrt
+    - repos/buildenv
+    - zeus
+    - hades
+
+- name: Create current build link in mirrors
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    state: link
+    force: yes
+    follow: no
+    path: '/var/www/mirrors/current'
+    src: '/var/lib/xbbs/projects/managarm/current'
+
+- name: Upload xbbs-project-rotate
+  become: yes
+  become_user: root
+  ansible.builtin.copy:
+    src: 'xbbs-project-rotate'
+    dest: '/var/lib/xbbs/xbbs-project-rotate'
+    mode: 0755
+
+- name: Add rotation cronjob
+  become: yes
+  become_user: xbbs
+  ansible.builtin.cron:
+    name: 'xbbs-project-rotate'
+    minute: '0'
+    hour: '21'
+    job: 'chronic /var/lib/xbbs/xbbs-project-rotate'
+
+# not included:
+# - pkgs/repos # managed in the distributions role
+
+# vim: sw=2 et :

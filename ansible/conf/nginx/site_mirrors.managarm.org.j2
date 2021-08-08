@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+{% import 'nginx_macros.j2' as h %}
+server {
+	listen 443 ssl http2;
+	autoindex on;
+	server_name mirrors.managarm.org;
+
+	root /var/www/mirrors;
+
+	{{ h.ssl_keys("mirrors.managarm.org") }}
+}

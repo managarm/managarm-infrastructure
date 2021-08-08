@@ -1,0 +1,63 @@
+---
+- name: Install rsyncd
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg: rsync
+
+- name: Install config file
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: rsyncd.conf.j2
+    dest: /etc/rsyncd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: rsyncd
+
+- name: Install motd file
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: rsyncd.motd.j2
+    dest: /etc/rsyncd.motd
+    owner: root
+    group: root
+    mode: 0644
+  notify: rsyncd
+
+- name: Install secrets file
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: 'secrets/rsyncd/{{ ansible_host }}'
+    dest: /etc/rsyncd.secrets
+    owner: root
+    group: root
+    mode: 0600
+  notify: rsyncd
+
+- name: Create rsyncd.d directory
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    state: directory
+    path: /etc/rsyncd.d
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install various module files
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: 'conf/rsyncd/module_{{ item }}.conf.j2'
+    dest: '/etc/rsyncd.d/module_{{ item }}.conf'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ rsyncd_modules }}'
+  notify: rsyncd
+
+# vim: sw=2 et :

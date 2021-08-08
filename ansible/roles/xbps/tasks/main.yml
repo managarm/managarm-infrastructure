@@ -1,0 +1,67 @@
+---
+- name: Make cache directory
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: /var/cache/managarm/ansible
+    mode: 0755
+    state: directory
+
+- name: Download xbps-static
+  become: yes
+  become_user: root
+  ansible.builtin.get_url:
+    dest: /var/cache/managarm/ansible/xbbs-static.tar.xz
+    checksum: "sha256:fb6dd121053f50147790bf81194f5ea96e08f852c0b38b21d607f7fa8f18f19e"
+    url: https://alpha.de.repo.voidlinux.org/static/xbps-static-static-0.59_5.x86_64-musl.tar.xz
+
+- name: Create xbps keys directory
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: /var/db/xbps/keys/
+    mode: 0755
+    state: directory
+
+- name: Extract xbps
+  become: yes
+  become_user: root
+  ansible.builtin.unarchive:
+    src: /var/cache/managarm/ansible/xbbs-static.tar.xz
+    dest: /
+    include: # explicit list here to prevent burning the rootfs
+      - ./usr/bin/xbps-uunshare
+      - ./usr/bin/xbps-uhelper
+      - ./usr/bin/xbps-uchroot
+      - ./usr/bin/xbps-rindex
+      - ./usr/bin/xbps-remove
+      - ./usr/bin/xbps-reconfigure
+      - ./usr/bin/xbps-query
+      - ./usr/bin/xbps-pkgdb
+      - ./usr/bin/xbps-install
+      - ./usr/bin/xbps-fetch
+      - ./usr/bin/xbps-fbulk
+      - ./usr/bin/xbps-digest
+      - ./usr/bin/xbps-dgraph
+      - ./usr/bin/xbps-create
+      - ./usr/bin/xbps-checkvers
+      - ./usr/bin/xbps-alternatives
+      - ./usr/bin/xbps-alternatives.static
+      - ./usr/bin/xbps-checkvers.static
+      - ./usr/bin/xbps-create.static
+      - ./usr/bin/xbps-dgraph.static
+      - ./usr/bin/xbps-digest.static
+      - ./usr/bin/xbps-fbulk.static
+      - ./usr/bin/xbps-fetch.static
+      - ./usr/bin/xbps-install.static
+      - ./usr/bin/xbps-pkgdb.static
+      - ./usr/bin/xbps-query.static
+      - ./usr/bin/xbps-reconfigure.static
+      - ./usr/bin/xbps-remove.static
+      - ./usr/bin/xbps-rindex.static
+      - ./usr/bin/xbps-uchroot.static
+      - ./usr/bin/xbps-uhelper.static
+      - ./usr/bin/xbps-uunshare.static
+    remote_src: yes
+
+# vim: sw=2 et :

@@ -1,0 +1,7 @@
+---
+- name: make_kernels_readable
+  become: yes
+  ansible.builtin.shell: "chmod +r /boot/vmlinu[xz]-*"
+  # noqa deprecated-command-syntax due to usage of globs
+
+# vim: sw=2 et :

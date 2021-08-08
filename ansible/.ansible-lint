@@ -1,0 +1,5 @@
+skip_list:
+  - meta-no-info   # don't care
+  - package-latest # intentional
+
+# vim: ft=yaml sw=2 et :

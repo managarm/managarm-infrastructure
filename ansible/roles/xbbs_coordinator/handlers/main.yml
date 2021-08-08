@@ -1,0 +1,12 @@
+---
+- name: xbbs_coordinator_services
+  become: yes
+  become_user: root
+  ansible.builtin.systemd:
+    name: xbbs-{{ item }}
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
+  loop: ["coordinator", "web", "webhooks"]
+
+# vim: sw=2 et :

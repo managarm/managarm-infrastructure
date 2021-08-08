@@ -1,0 +1,5 @@
+---
+acme_directory_url: 'https://acme-v02.api.letsencrypt.org/directory'
+acme_services: ["nginx"]
+
+# vim: sw=2 et :

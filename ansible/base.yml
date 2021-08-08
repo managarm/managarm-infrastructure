@@ -1,0 +1,37 @@
+---
+# installs various usability packages
+
+# ensures time is correct
+- hosts: all
+  roles:
+    - chrony
+
+# enables backports and install packages required to support ansible features
+# we use
+- hosts: all
+  roles:
+    - buster_backports
+    - ansible_support
+
+# QoL fixes
+- hosts: all
+  become: yes
+  become_user: root
+  tasks:
+    - name: Install sanity packages
+      ansible.builtin.apt:
+        pkg:
+          - vim
+          - less
+          - man-db
+          - htop
+          - moreutils
+          - lsof
+          - file
+          - strace
+          - ltrace
+          - tmux
+          - tree
+          - curl
+
+# vim: sw=2 et :

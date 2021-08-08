@@ -1,0 +1,11 @@
+coordinator_endpoint = "{{ xbbs_cfg.command_endpoint }}"
+github_secret = "{{ lookup("file", "secrets/xbbs/github_secret") }}"
+
+[github]
+{% for project in xbbs_cfg.hook_projects %}
+{% for repository in xbbs_cfg.hook_projects[project] %}
+"{{ repository }}" = "{{ project }}"
+{% endfor %}
+{% endfor %}
+
+# vim: ft=toml :

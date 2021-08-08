@@ -1,0 +1,122 @@
+---
+- name: Install required packages
+  become: yes
+  ansible.builtin.apt:
+    pkg:
+      - stow
+      - python3-pip
+
+- name: Install distribution group
+  become: yes
+  ansible.builtin.group:
+    name: distribution
+    system: true
+    state: present
+
+- name: Install approve-distro deps
+  become: yes
+  ansible.builtin.pip:
+    state: present
+    name:
+      - discord-webhook
+      - attrs
+      - toml
+
+- name: Create maintainer group
+  become: yes
+  ansible.builtin.group:
+    name: maintainer
+    system: true
+    state: present
+
+- name: Create distribution user
+  become: yes
+  ansible.builtin.user:
+    state: present
+    name: distribution
+    comment: Managarm stable distribution user
+    home: /nonexistent
+    shell: "/bin/false"
+    system: true
+    group: distribution
+
+- name: Create /usr/local/opt
+  become: yes
+  ansible.builtin.file:
+    state: directory
+    path: /usr/local/opt
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy over approve-distro package
+  become: yes
+  ansible.builtin.copy:  # noqa risky-file-permissions
+    src: ../pkgs/distro-repo
+    dest: /usr/local/opt/
+
+- name: Ensure script perms are correct
+  become: yes
+  ansible.builtin.file:
+    state: file
+    path: /usr/local/opt/distro-repo/bin/approve-distro
+    owner: distribution
+    group: distribution
+    mode: 0744
+
+- name: Stow the package
+  become: yes
+  stow:
+    state: present
+    package: distro-repo
+    dir: /usr/local/opt
+    target: /usr/local
+
+- name: Install sudoers configuration
+  become: yes
+  ansible.builtin.template:
+    src: distribution_sudoers.j2
+    dest: /etc/sudoers.d/distribution_sudoers
+    owner: root
+    group: root
+    mode: 0640
+    validate: /usr/sbin/visudo -cf %s
+
+- name: Install approve-distro configuration
+  become: yes
+  ansible.builtin.template:
+    src: "conf/distribution/{{ inventory_hostname }}.j2"
+    dest: "/etc/approve-distro.toml"
+    owner: distribution
+    group: distribution
+    mode: 0644
+
+- name: Install approve-distro secrets
+  become: yes
+  ansible.builtin.template:
+    src: "secrets/distribution/{{ inventory_hostname }}.j2"
+    dest: /etc/approve-distro.secret.toml
+    owner: distribution
+    group: distribution
+    mode: 0600
+
+- name: Create repositories directory
+  become: yes
+  ansible.builtin.file:
+    state: directory
+    path: /var/www/repos/amd64
+    owner: distribution
+    group: distribution
+    mode: 0755
+
+- name: Copy shell alias
+  become: yes
+  ansible.builtin.template:
+    src: distribution_alias.sh.j2
+    dest: /etc/profile.d/distribution_alias.sh
+    owner: root
+    group: root
+    mode: 0644
+    validate: /bin/sh
+
+# vim: sw=2 et :

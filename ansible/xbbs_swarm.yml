@@ -1,0 +1,18 @@
+---
+- hosts: wg_worknet
+  roles:
+    - ansible_support
+    - buster_backports
+    - wireguard_star
+
+- hosts: coordinators
+  roles:
+    - xbbs_coordinator
+    - rsyncd
+    - distribution
+
+- hosts: workers
+  roles:
+    - xbbs_worker
+
+# vim: et sw=2 :

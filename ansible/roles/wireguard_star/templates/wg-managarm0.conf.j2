@@ -1,0 +1,24 @@
+[Interface]
+Address = {{ wg_ip }}
+PrivateKey = {{ lookup('file', 'secrets/wg/' + inventory_hostname) }}
+{% if wgstar_router == inventory_hostname %}
+ListenPort = 51820
+PostUp = sysctl -w net.ipv4.conf.%i.forwarding=1
+{% for peer in groups['wg_worknet'] if peer != inventory_hostname %}
+
+[Peer]
+PublicKey = {{ lookup('file', 'secrets/wg/' + peer + '.pub') }}
+AllowedIPs = {{ hostvars[peer].wg_ip }}/32
+PresharedKey = {{ lookup('file', 'secrets/wg/' + peer + '.psk') }}
+{% endfor %}
+{% else %}
+
+[Peer]
+Endpoint = {{ wgstar_router }}:51820
+PublicKey = {{ lookup('file', 'secrets/wg/' + wgstar_router + '.pub') }}
+AllowedIPs = {{ hostvars[wgstar_router].wg_ip }}/24
+PresharedKey = {{ lookup('file', 'secrets/wg/' + inventory_hostname + '.psk') }}
+PersistentKeepalive = 25
+{% endif %}
+
+# vim: ft=htmldjango :

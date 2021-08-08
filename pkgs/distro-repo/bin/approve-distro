@@ -74,6 +74,7 @@ def split_chunks(l, k):
 		yield c
 
 def main(args):
+	os.environ["XBPS_ARCH"] = "x86_64"
 	conf = toml.load('/etc/approve-distro.toml')
 	secret = toml.load('/etc/approve-distro.secret.toml')
 

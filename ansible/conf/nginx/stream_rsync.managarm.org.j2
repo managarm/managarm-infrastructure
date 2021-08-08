@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+{% import 'nginx_macros.j2' as h %}
+server {
+	listen 874 ssl;
+	listen [::]:874 ssl;
+
+	proxy_pass localhost:8733;
+#	proxy_protocol on;
+	proxy_timeout 1m;
+	proxy_connect_timeout 5s;
+
+	{{ h.ssl_keys("rsync.managarm.org") }}
+}

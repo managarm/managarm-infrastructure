@@ -1,0 +1,108 @@
+---
+- name: Collect xbbs-related facts
+  become: yes
+  become_user: xbbs
+  xbbs_support_facts: ~
+
+- name: Enable usernses on Debian
+  become: yes
+  become_user: root
+  ansible.posix.sysctl:
+    name: 'kernel.unprivileged_userns_clone'
+    value: '1'
+    sysctl_set: yes
+
+- name: Install xbstrap and xbbs from git
+  become: yes
+  become_user: root
+  ansible.builtin.pip:
+    state: latest
+    name:
+      - git+https://github.com/managarm/xbstrap.git
+      - git+https://github.com/managarm/xbbs.git
+  notify: xbbs_worker
+
+- name: Install xbstrap and xbbs from git
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg: libguestfs-tools
+
+- name: Install systemd service files
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: "xbbs-worker.service.j2"
+    dest: "/etc/systemd/system/xbbs-worker.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: xbbs_worker
+
+- name: Install worker configuration file
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: "worker.toml.j2"
+    dest: "/etc/xbbs/worker.toml"
+    owner: xbbs
+    group: xbbs
+    mode: 0644
+  notify: xbbs_worker
+
+- name: Create cbuildrt home
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: "/var/lib/cbuildrt"
+    state: directory
+    owner: xbbs
+    group: xbbs
+    mode: 0755
+  notify: update_cbuildrt_rootfs
+
+- name: Create xbstrap home
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ xbbs_cfg.xbstrap_home }}"
+    state: directory
+    owner: xbbs
+    group: xbbs
+    mode: 0755
+
+- name: Create xbstrap home bin directory
+  become: yes
+  become_user: xbbs
+  ansible.builtin.file:
+    path: "{{ xbbs_cfg.xbstrap_home }}/bin"
+    state: directory
+    mode: 0755
+
+- name: Download cbuildrt from GitHub releases
+  become: yes
+  become_user: xbbs
+  ansible.builtin.get_url:
+    url: "https://github.com/managarm/cbuildrt/releases/download/v0.1.1/cbuildrt-linux-x86_64-static.tar"
+    dest: "{{ xbbs_cfg.xbstrap_home }}/cbuildrt-linux-amd64-static.tar"
+    checksum: "sha256:64024a5fb00d18e890131eaf66aef074d979fdb6dcc82b2b431bbb5e9513fff4"
+    mode: 0644
+
+- name: Unarchive cbuildrt
+  become: yes
+  become_user: xbbs
+  ansible.builtin.unarchive:
+    src: "{{ xbbs_cfg.xbstrap_home }}/cbuildrt-linux-amd64-static.tar"
+    dest: "{{ xbbs_cfg.xbstrap_home }}/bin"
+    remote_src: yes
+
+- name: Install update script
+  become: yes
+  become_user: xbbs
+  ansible.builtin.template:
+    src: "update_rootfs.sh.j2"
+    dest: "{{ xbbs_cfg.xbstrap_home }}/update_rootfs.sh"
+    mode: 0755
+  notify: update_cbuildrt_rootfs
+
+# vim: sw=2 et :

@@ -1,0 +1,8 @@
+---
+- name: Install acl utils
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg: ["acl", "iproute2"]
+
+# vim: sw=2 et :

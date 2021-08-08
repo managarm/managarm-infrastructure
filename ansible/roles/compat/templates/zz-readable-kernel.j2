@@ -1,0 +1,18 @@
+#!/bin/sh
+# {{ ansible_managed }}
+# This script makes the kernel images readable after an install, in order to
+# make them usable by libguestfs
+set -xe
+
+get_right_name() {
+        for x in /boot/vmlinuz-"$1" /boot/vmlinux-"$1"; do
+                if [ -r "$x" ]; then
+                        echo "$x"
+                        return
+                fi
+        done
+}
+
+[ -z "$2" ] && set -- "$1" "$(get_right_name "$1")"
+
+chmod +r "$2"

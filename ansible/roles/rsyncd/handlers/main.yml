@@ -1,0 +1,10 @@
+---
+- name: rsyncd
+  become: yes
+  become_user: root
+  ansible.builtin.systemd:
+    name: rsync
+    enabled: yes
+    state: restarted
+
+# vim: sw=2 et :

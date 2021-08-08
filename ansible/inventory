@@ -1,0 +1,16 @@
+[coordinators]
+hades.hosts.managarm.org
+
+[workers]
+sunset.contrib.hosts.managarm.org
+raptor.dennisbonke.com
+tictac.aarsen.me
+
+[wg_worknet]
+hades.hosts.managarm.org wg_ip=10.0.69.1
+sunset.contrib.hosts.managarm.org wg_ip=10.0.69.2
+raptor.dennisbonke.com wg_ip=10.0.69.3
+tictac.aarsen.me wg_ip=10.0.69.4
+
+[wg_worknet:vars]
+wgstar_router=hades.hosts.managarm.org

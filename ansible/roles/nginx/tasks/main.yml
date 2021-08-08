@@ -1,0 +1,107 @@
+---
+- name: Install nginx
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg: nginx
+  notify: nginx
+
+- name: Install nginx configuration files
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: 'nginx.conf.j2'
+    dest: '/etc/nginx/nginx.conf'
+    mode: 0644
+  notify: nginx
+
+- name: Install extra nginx configuration snippets
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: '{{ item }}'
+    dest: '/etc/nginx/conf.d/'
+    mode: 0644
+  loop:
+    - ssl.conf.j2
+    - ffdhe2048.txt.j2
+  notify: nginx
+
+- name: Remove default nginx site
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: '/etc/nginx/sites-enabled/default'
+    state: absent
+
+- name: Remove default nginx index
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: '/var/www/html/index.nginx-debian.html'
+    state: absent
+
+- name: Add streams directory
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: '/etc/nginx/streams'
+    state: directory
+    mode: 0755
+
+- name: Test nginx configuration
+  become: yes
+  become_user: root
+  ansible.builtin.command: /usr/sbin/nginx -t
+  register: nginx_test_res
+  failed_when: 'nginx_test_res.rc != 0'
+  changed_when: False
+
+# this is probably awfully anti idiomatic
+- name: Check if certs exist
+  become: yes
+  become_user: acme
+  ansible.builtin.command:
+    argv:
+      - '['
+      - '-r'
+      - '/var/lib/acme/certs/{{ item }}/certificate.pem'
+      - ']'
+  register: ssl_cert_test_res
+  failed_when: False
+  changed_when: 'ssl_cert_test_res.rc != 0'
+  loop: '{{ acme_domains }}'
+  notify: run_acme_once
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Install nginx sites
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: 'conf/nginx/site_{{ item }}.j2'
+    dest: '/etc/nginx/sites-enabled/{{ item }}'
+    mode: 0644
+  loop: "{{ nginx_sites }}"
+  notify: nginx
+
+- name: Install nginx streams
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: 'conf/nginx/stream_{{ item }}.j2'
+    dest: '/etc/nginx/streams/{{ item }}'
+    mode: 0644
+  loop: "{{ nginx_streams }}"
+  notify: nginx
+
+- name: Test nginx configuration
+  become: yes
+  become_user: root
+  ansible.builtin.command: /usr/sbin/nginx -t
+  register: nginx_test_res
+  failed_when: 'nginx_test_res.rc != 0'
+  changed_when: False
+
+# vim: sw=2 et :

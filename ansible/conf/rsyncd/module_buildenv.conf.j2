@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+# ro access to read buildenvs
+[buildenv]
+	read only = yes
+	path = /var/www/repos/buildenv/./
+	comment = managarm build environment rsync root
+
+[wbuildenv]
+	read only = no
+	path = /var/www/repos/buildenv/./
+	comment = writeable managarm build environment rsync root
+	auth users = buildenv
+
+# rsyncd doesn't support anon and auth on the same module

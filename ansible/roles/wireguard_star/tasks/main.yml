@@ -1,0 +1,20 @@
+---
+- name: Install WireGuard
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg:
+      - wireguard
+
+- name: Install WireGuard configuration file
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: wg-managarm0.conf.j2
+    dest: /etc/wireguard/wg-managarm0.conf
+    owner: root
+    group: root
+    mode: 0640
+  notify: wireguard
+
+# vim: sw=2 et :

@@ -1,0 +1,31 @@
+---
+xbbs_cfg:
+  command_endpoint: "ipc:///tmp/xbbs-coordinator-socket"
+  intake: "tcp://10.0.69.1:16999"
+  worker_endpoint: "tcp://10.0.69.1:16001"
+  build_root: "/var/lib/xbbs/tmp/worker"
+  webhook_bind: "127.0.0.1:17001"
+  web_bind: "127.0.0.1:17000"
+  fingerprints:
+    managarm: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
+  hook_projects:
+    managarm:
+      - managarm/libsmarter
+      - managarm/managarm
+      - managarm/bragi
+      - managarm/lai
+      - managarm/lewis
+      - managarm/frigg
+      - managarm/cralgo
+      - managarm/mlibc
+      - managarm/libarch
+      - managarm/libasync
+      - managarm/fafnir
+      - managarm/cxxshim
+      - managarm/bootstrap-managarm
+
+# TODO(arsen): this sort of config should contain more xbbs configuration,
+# specifically, the project configuration, so that we can reuse it for other
+# projects too.
+
+# vim: sw=2 et :

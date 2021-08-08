@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: nginx
+  - role: xbbs_common
+# vim: sw=2 et :

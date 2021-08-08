@@ -1,0 +1,21 @@
+---
+nginx_sites:
+  - builds.managarm.org
+  - docs.managarm.org
+  - mirrors.managarm.org
+  - repos.managarm.org
+  - pkgs.managarm.org # removed, a redirect for now
+  - ci.managarm.org # removed, a redirect for now
+  - hades.hosts.managarm.org
+
+nginx_streams:
+  - rsync.managarm.org
+
+rsyncd_modules:
+  - docs
+  - cbuildrt
+  - buildenv
+
+acme_domains: "{{ nginx_sites + nginx_streams }}"
+
+# vim: sw=2 et :

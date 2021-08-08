@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: acme
+
+# vim: sw=2 et :

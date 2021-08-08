@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+{% import 'nginx_macros.j2' as h %}
+server {
+	listen 443 ssl http2;
+	server_name builds.managarm.org;
+
+	location / {
+		proxy_redirect          http:// https://;
+		proxy_pass              http://{{ xbbs_cfg.web_bind }};
+	}
+
+	{{ h.ssl_keys("builds.managarm.org") }}
+}

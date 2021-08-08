@@ -1,0 +1,9 @@
+---
+- name: Add backports repository to Debian Buster
+  become: yes
+  become_user: root
+  ansible.builtin.apt_repository:
+    repo: deb http://deb.debian.org/debian buster-backports main
+    state: present
+  when: ansible_facts['distribution_release'] == 'buster'
+# vim: et sw=2 :
