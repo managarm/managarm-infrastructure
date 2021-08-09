@@ -39,6 +39,7 @@
     shell: "/bin/false"
     system: true
     group: distribution
+    groups: xbbs
 
 - name: Create /usr/local/opt
   become: yes
