@@ -4,6 +4,7 @@ The secret files in here correspond to ``approve-distro.secret.toml`` files for
 the ``distro-repo`` package. They are of the format:
 
 .. code-block:: toml
+
     [discord_hook]
     webhook_url = "..."
 
