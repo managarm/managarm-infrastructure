@@ -10,7 +10,7 @@ in ``pkgs/``. These are designed to be ``stow``-ed onto final servers.
 
 License and copyright
 =====================
-All work held under the umbrella of this repository is MIT licensed. See
-LICENSE_ for the full text of this notice.
+All work held under the umbrella of this repository is MIT licensed except
+where otherwise specified. See LICENSE_ for the full text of this notice.
 
 .. _LICENSE: ./LICENSE
