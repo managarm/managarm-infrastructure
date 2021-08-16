@@ -2,10 +2,9 @@ coordinator_endpoint = "{{ xbbs_cfg.command_endpoint }}"
 github_secret = "{{ lookup("file", "secrets/xbbs/github_secret") }}"
 
 [github]
-{% for project in xbbs_cfg.hook_projects %}
-{% for repository in xbbs_cfg.hook_projects[project] %}
-"{{ repository }}" = "{{ project }}"
-{% endfor %}
+{% for item in xbbs_cfg.hook_projects|dict2items %}
+{# this can be better #}
+{{ item.key|tojson }} = [{{ item.value|map('tojson')|join(", ") }}]
 {% endfor %}
 
 # vim: ft=toml :

@@ -10,20 +10,19 @@ xbbs_cfg:
     managarm: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
     managarm_aarch64: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
   hook_projects:
-    managarm:
-      - managarm/libsmarter
-      - managarm/managarm
-      - managarm/bragi
-      - managarm/lai
-      - managarm/lewis
-      - managarm/frigg
-      - managarm/cralgo
-      - managarm/mlibc
-      - managarm/libarch
-      - managarm/libasync
-      - managarm/fafnir
-      - managarm/cxxshim
-      - managarm/bootstrap-managarm
+    managarm/libsmarter: [managarm, managarm_aarch64]
+    managarm/managarm: [managarm, managarm_aarch64]
+    managarm/bragi: [managarm, managarm_aarch64]
+    managarm/lai: [managarm, managarm_aarch64]
+    managarm/lewis: [managarm, managarm_aarch64]
+    managarm/frigg: [managarm, managarm_aarch64]
+    managarm/cralgo: [managarm, managarm_aarch64]
+    managarm/mlibc: [managarm, managarm_aarch64]
+    managarm/libarch: [managarm, managarm_aarch64]
+    managarm/libasync: [managarm, managarm_aarch64]
+    managarm/fafnir: [managarm, managarm_aarch64]
+    managarm/cxxshim: [managarm, managarm_aarch64]
+    managarm/bootstrap-managarm: [managarm, managarm_aarch64]
 
 # TODO(arsen): this sort of config should contain more xbbs configuration,
 # specifically, the project configuration, so that we can reuse it for other
