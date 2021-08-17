@@ -124,14 +124,17 @@
     dest: '/var/lib/xbbs/xbbs-project-rotate'
     mode: 0755
 
-- name: Add rotation cronjob
+- name: Add rotation cronjobs
   become: yes
   become_user: xbbs
   ansible.builtin.cron:
-    name: 'xbbs-project-rotate'
+    name: 'xbbs-project-rotate-{{ item }}'
     minute: '0'
     hour: '21'
-    job: 'chronic /var/lib/xbbs/xbbs-project-rotate'
+    job: >-
+      cd /var/lib/xbbs/{{ item|quote }} &&
+      chronic /var/lib/xbbs/xbbs-project-rotate
+  loop: [managarm, managarm_aarch64]
 
 # not included:
 # - pkgs/repos # managed in the distributions role
