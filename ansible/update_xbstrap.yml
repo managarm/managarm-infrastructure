@@ -1,0 +1,7 @@
+---
+- hosts: coordinators:workers
+  become: yes
+  tasks:
+    - ansible.builtin.pip: name=git+https://github.com/managarm/xbstrap.git state=latest
+
+# vim: et sw=2 :

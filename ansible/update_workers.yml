@@ -1,0 +1,11 @@
+---
+# This could have been merged with update_coordinator if ansible.builtin.pip
+# behaved sanely (actually checked if an upgrade happens when state=latest is
+# passed) instead of just reporting unchanged every time
+- hosts: workers
+  become: yes
+  tasks:
+    - ansible.builtin.pip: name=git+https://github.com/managarm/xbbs.git state=latest
+    - ansible.builtin.systemd: unit=xbbs-worker state=restarted
+
+# vim: et sw=2 :
