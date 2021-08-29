@@ -136,6 +136,18 @@
       chronic /var/lib/xbbs/xbbs-project-rotate
   loop: [managarm, managarm_aarch64]
 
+- name: Run weekly full rebuilds
+  become: yes
+  become_user: xbbs
+  ansible.builtin.cron:
+    name: 'xbbs-full-rebuild-{{ item }}'
+    minute: '0'
+    hour: '1'
+    dow: '7'
+    job: >-
+      chronic xbbs-cli build --no-incremental {{ item|quote }}
+  loop: [managarm, managarm_aarch64]
+
 # not included:
 # - pkgs/repos # managed in the distributions role
 
