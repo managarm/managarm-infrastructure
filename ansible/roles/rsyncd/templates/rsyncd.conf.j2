@@ -12,7 +12,6 @@ uid = {{ rsyncd_uid }}
 gid = {{ rsyncd_gid }}
 {% if rsyncd_haproxy_protocol %}
 proxy protocol = true
-haproxy header = true
 {% endif %}
 secrets file = /etc/rsyncd.secrets
 motd file = /etc/rsyncd.motd
