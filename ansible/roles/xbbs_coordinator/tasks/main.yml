@@ -145,7 +145,7 @@
     hour: '1'
     dow: '7'
     job: >-
-      chronic xbbs-cli build --no-incremental {{ item|quote }}
+      . /etc/profile; chronic xbbs-cli build --no-incremental {{ item|quote }}
   loop: [managarm, managarm_aarch64]
 
 # not included:
