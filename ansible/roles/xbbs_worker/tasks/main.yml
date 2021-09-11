@@ -105,4 +105,13 @@
     mode: 0755
   notify: update_cbuildrt_rootfs
 
+- name: Install the rootfs update cronjob
+  become: yes
+  become_user: xbbs
+  ansible.builtin.cron:
+    name: 'xbbs-worker-update-rootfs'
+    minute: '0'
+    hour: '21'
+    job: . /etc/profile; "{{ xbbs_cfg.xbstrap_home }}/update_rootfs.sh"
+
 # vim: sw=2 et :

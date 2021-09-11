@@ -26,9 +26,17 @@ until sha256sum -c managarm-buildenv.sum; do
 done
 
 cd /var/lib/cbuildrt
-if tar df "$xbhome"/dls/managarm-buildenv.tar.gz \
-	--xform='s/^rootfs/managarm-buildenv/' 2>&1 \
-	| grep -v ': [UG]id differs$'; then  # detect any non-ownership diffs
+tempdir="$(mktemp -dp .)"
+
+(
+	cd "$tempdir"
 	tar xf "$xbhome"/dls/managarm-buildenv.tar.gz \
-		--xform='s/^rootfs/managarm-buildenv/' -p
-fi
+		--strip-components=1 -p
+)
+
+exec 4>/var/lib/cbuildrt/managarm-buildenv.cbrt_lock
+flock 4
+echo "lock acquired, unpacking..."
+
+rm -rf managarm-buildenv  # nuke old dir
+mv "$tempdir" managarm-buildenv
