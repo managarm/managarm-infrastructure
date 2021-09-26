@@ -27,6 +27,7 @@ done
 
 cd /var/lib/cbuildrt
 tempdir="$(mktemp -dp .)"
+chmod 755 "$tempdir"
 
 (
 	cd "$tempdir"
