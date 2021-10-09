@@ -28,4 +28,16 @@ fingerprint = "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
 incremental = true
 distfile_path = "xbbs/aarch64/"
 
+[projects.managarm_riscv]
+git = "https://github.com/managarm/bootstrap-managarm.git"
+description = "Pragmatic microkernel-based OS with fully asynchronous I/O. Now on a real RISC CPU!"
+classes = ["managarm"]
+# external access to tools and packages repo, to be used by worker (through
+# xbps-install and just a simple tarfile download)
+packages = "https://mirrors.managarm.org/currents/riscv/package_repo"
+tools = "https://mirrors.managarm.org/currents/riscv/tool_repo"
+fingerprint = "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
+incremental = true
+distfile_path = "xbbs/riscv/"
+
 # vim: ft=toml :

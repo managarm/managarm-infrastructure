@@ -134,7 +134,7 @@
     job: >-
       cd /var/lib/xbbs/projects/{{ item|quote }} &&
       chronic /var/lib/xbbs/xbbs-project-rotate
-  loop: [managarm, managarm_aarch64]
+  loop: [managarm, managarm_aarch64, managarm_riscv]
 
 - name: Run weekly full rebuilds
   become: yes
@@ -146,7 +146,7 @@
     dow: '7'
     job: >-
       . /etc/profile; chronic xbbs-cli build --no-incremental {{ item|quote }}
-  loop: [managarm, managarm_aarch64]
+  loop: [managarm, managarm_aarch64, managarm_riscv]
 
 # not included:
 # - pkgs/repos # managed in the distributions role
