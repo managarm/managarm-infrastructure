@@ -4,7 +4,7 @@ hades.hosts.managarm.org
 [workers]
 sunset.contrib.hosts.managarm.org
 raptor.dennisbonke.com
-tictac.aarsen.me
+#tictac.aarsen.me
 
 [wg_worknet]
 hades.hosts.managarm.org wg_ip=10.0.69.1
