@@ -22,7 +22,7 @@ acme_domains: "{{ nginx_sites + nginx_streams }}"
 bridge:
   irc_network: irc.libera.chat
   irc_port: 6697 # requires tls
-  message_base_url: https://relay.managarm.org/idb/
+  message_base_url: https://relay.managarm.org/idb
   channels:
     "678608576151027734":
       irc_channel: '#managarm'
