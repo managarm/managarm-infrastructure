@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+{% import 'nginx_macros.j2' as h %}
+server {
+	listen 443 ssl http2;
+	server_name relay.managarm.org;
+
+	root /var/www/relay;
+	default_type text/html;
+
+	{{ h.ssl_keys("relay.managarm.org") }}
+}

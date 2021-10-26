@@ -1,0 +1,66 @@
+---
+- name: Add irc-discord-bridgebot group
+  become: yes
+  ansible.builtin.group:
+    name: message-relays
+    system: true
+    state: present
+
+- name: Add irc-discord-bridgebot user
+  become: yes
+  ansible.builtin.user:
+    state: present
+    name: irc-discord-bridgebot
+    group: message-relays
+    comment: A message relay between IRC <-> Discord
+    system: true
+    shell: "/bin/false"
+
+  # TODO(arsen): handle updates better
+- name: Download the bridge
+  become: yes
+  ansible.builtin.get_url:
+    url: http://cdn.aarsen.me/builds/irc-discord-bridgebot/master
+    dest: /usr/local/bin/irc-discord-bridgebot
+    mode: 0755
+  notify: restart_bridgebot
+
+- name: Install the service
+  become: yes
+  ansible.builtin.template:
+    src: "irc-discord-bridgebot.service.j2"
+    dest: "/etc/systemd/system/irc-discord-bridgebot.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_bridgebot
+
+- name: Create /var/www/relay/idb
+  become: yes
+  ansible.builtin.file:
+    path: /var/www/relay/idb
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: message-relays
+
+- name: Download the message stylesheet
+  become: yes
+  ansible.builtin.get_url:
+    url: https://git.sr.ht/~arsen/irc-discord-bridgebot/blob/master/message_style.css
+    dest: /var/www/relay/idb/message_style.css
+    mode: 0644
+    owner: www-data
+    group: message-relays
+  notify: restart_bridgebot
+
+- name: Generate the irc-discord-bridgebot config
+  become: yes
+  ansible.builtin.template:
+    dest: /etc/irc-discord-bridgebot.env
+    src: irc-discord-bridgebot.env.j2
+    owner: root
+    group: root
+    mode: 0600
+
+# vim: sw=2 et :

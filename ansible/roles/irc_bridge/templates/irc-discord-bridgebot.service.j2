@@ -1,0 +1,26 @@
+[Unit]
+Description=A puppet-connection based bridge between Discord and IRC
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/run/irc-discord-bridgebot
+RuntimeDirectory=irc-discord-bridgebot
+
+EnvironmentFile=/etc/irc-discord-bridgebot.env
+
+User=irc-discord-bridgebot
+
+ExecStart=/usr/local/bin/irc-discord-bridgebot
+
+ProtectProc=noaccess
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+ReadWritePaths=/var/www/relay/idb
+
+[Install]
+WantedBy=multi-user.target
+
+# vim: ft=conf :

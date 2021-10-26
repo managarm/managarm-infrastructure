@@ -1,0 +1,8 @@
+---
+- hosts: bridges
+  roles:
+    - acme
+    - nginx
+    - irc_bridge
+
+# vim: sw=2 et :

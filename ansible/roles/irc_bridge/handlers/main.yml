@@ -1,0 +1,9 @@
+---
+- name: restart_bridgebot
+  become: yes
+  ansible.builtin.systemd:
+    name: irc-discord-bridgebot
+    enabled: yes
+    state: restarted
+
+# vim: sw=2 et :
