@@ -100,7 +100,7 @@
     minute: '0'
     hour: '0'
     dow: '0'
-    job: 'chronic /var/lib/acme/update_certs.sh'
+    job: 'chronic /var/lib/acme/update_certs.sh && chronic sudo systemctl reload nginx'
 
 
 # vim: sw=2 et :
