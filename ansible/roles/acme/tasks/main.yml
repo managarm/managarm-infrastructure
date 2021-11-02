@@ -92,6 +92,37 @@
     mode: 0640
     validate: /usr/sbin/visudo -cf %s
 
+- name: Add acme-updated.service
+  become: yes
+  ansible.builtin.template:
+    dest: '/etc/systemd/system/acme-updated.service'
+    src: 'acme-updated.service.j2'
+    owner: root
+    group: root
+    mode: 0644
+  notify: systemd_daemon_reload
+
+- name: Add service drop-in directories
+  become: yes
+  ansible.builtin.file:
+    state: directory
+    dest: '/etc/systemd/system/{{ item }}.d/'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ acme_units }}'
+
+- name: Add acme-updated.service propagation drop-ins
+  become: yes
+  ansible.builtin.template:
+    dest: '/etc/systemd/system/{{ item }}.d/acme-updates.conf'
+    src: 'acme-update-target.conf.j2'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ acme_units }}'
+  notify: systemd_daemon_reload
+
 - name: Add ACME cronjob
   become: yes
   become_user: acme
@@ -100,7 +131,7 @@
     minute: '0'
     hour: '0'
     dow: '0'
-    job: 'chronic /var/lib/acme/update_certs.sh && chronic sudo systemctl reload nginx'
+    job: 'chronic /var/lib/acme/update_certs.sh && chronic sudo systemctl reload acme-updated.service'
 
 
 # vim: sw=2 et :

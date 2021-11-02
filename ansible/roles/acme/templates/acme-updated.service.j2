@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+[Unit]
+Description=A pseudo-unit for propagating ACME update events
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/bin/true
+ExecReload=/bin/true
+
+[Install]
+WantedBy=multi-user.target
+
+# vim: ft=systemd :

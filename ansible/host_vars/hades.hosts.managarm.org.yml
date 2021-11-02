@@ -18,6 +18,10 @@ rsyncd_modules:
   - buildenv
 
 acme_domains: "{{ nginx_sites + nginx_streams }}"
+acme_units:
+  - nginx.service
+  - dovecot.service
+  - postfix.service
 
 bridge:
   irc_network: irc.libera.chat
