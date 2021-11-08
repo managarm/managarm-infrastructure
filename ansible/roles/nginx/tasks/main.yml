@@ -6,6 +6,17 @@
     pkg: nginx
   notify: nginx
 
+- name: Generate garbage certificate
+  become: yes
+  ansible.builtin.command:
+    cmd: >-
+      openssl req -x509 -newkey rsa:4096
+      -keyout /etc/nginx/donotuse.pem
+      -out /etc/nginx/donotuse.crt
+      -nodes
+      -sha512 -days 69420 -subj "/CN=this matches nothing"
+    creates: /etc/nginx/donotuse.[cp][er][mt]
+
 - name: Install nginx configuration files
   become: yes
   become_user: root
