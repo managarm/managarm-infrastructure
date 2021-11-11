@@ -16,4 +16,4 @@ tictac.aarsen.me wg_ip=10.0.69.4
 wgstar_router=hades.hosts.managarm.org
 
 [bridges]
-hades.hosts.managarm.org
+hermes.hosts.managarm.org

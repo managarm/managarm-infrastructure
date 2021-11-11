@@ -1,0 +1,26 @@
+[general]
+ipblock = "{{ bridge.ip_block }}"
+
+# IRC network of choice (TLS only)
+ircshost = "{{ bridge.irc_network }}"
+ircsport = {{ bridge.irc_port }}
+
+# suffix to use for botted users
+suffix = "|M"
+
+# discord reader token
+discordtoken = "{{ lookup('file', 'secrets/bridge/token') }}"
+
+# where messages are exposed (no trailing slash)
+messagebaseurl = "{{ bridge.message_base_url }}"
+# ... and what to bind it to
+messagelistenaddress = "127.0.0.1:8113"
+
+{% for item in bridge.channels|dict2items %}
+[channelmap.{{ item.key }}]
+whid = "{{ lookup('file', 'secrets/bridge/' + item.key + '/whid') }}"
+whtoken = "{{ lookup('file', 'secrets/bridge/' + item.key + '/whtoken') }}"
+ircchannel = "{{ item.value.irc_channel }}"
+{% endfor %}
+
+# vim: ft=toml :

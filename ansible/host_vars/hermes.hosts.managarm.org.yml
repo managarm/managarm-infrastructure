@@ -1,0 +1,34 @@
+---
+nginx_sites:
+  - relay.managarm.org
+
+nginx_streams: []
+
+acme_domains: "{{ nginx_sites + nginx_streams }}"
+acme_units:
+  - nginx.service
+
+bridge:
+  ip_block: '2a01:4f8:1c1e:5eef::'
+  irc_network: irc.libera.chat
+  irc_port: 6697 # requires tls
+  message_base_url: https://relay.managarm.org/idb
+  channels:
+    "678608576151027734":
+      irc_channel: '#managarm'
+    "678613590646849576":
+      irc_channel: '#managarm-dev'
+    "678613510237978625":
+      irc_channel: '#managarm-mlibc'
+    "779254963557761044":
+      irc_channel: '#managarm-lai'
+    "707189087269814302":
+      irc_channel: '#managarm-ports'
+    "685151198453825566":
+      irc_channel: '#managarm-xbstrap'
+    "678613670980222987":
+      irc_channel: '#managarm-misc'
+    "888101472313700372":
+      irc_channel: '#managarm-riscv'
+
+# vim: sw=2 et :

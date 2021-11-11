@@ -7,10 +7,8 @@ Wants=network-online.target
 WorkingDirectory=/run/irc-discord-bridgebot
 RuntimeDirectory=irc-discord-bridgebot
 
-EnvironmentFile=/etc/irc-discord-bridgebot.env
-
+Environment=IDB_CONFIG=/etc/idb.toml
 User=irc-discord-bridgebot
-
 ExecStart=/usr/local/bin/irc-discord-bridgebot
 
 ProtectProc=noaccess
@@ -18,7 +16,7 @@ NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
 
-ReadWritePaths=/var/www/relay/idb
+AmbientCapabilities=CAP_NET_RAW CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target

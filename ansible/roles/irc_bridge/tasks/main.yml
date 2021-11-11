@@ -35,32 +35,13 @@
     mode: 0644
   notify: restart_bridgebot
 
-- name: Create /var/www/relay/idb
-  become: yes
-  ansible.builtin.file:
-    path: /var/www/relay/idb
-    state: directory
-    mode: 0775
-    owner: www-data
-    group: message-relays
-
-- name: Download the message stylesheet
-  become: yes
-  ansible.builtin.get_url:
-    url: https://git.sr.ht/~arsen/irc-discord-bridgebot/blob/master/message_style.css
-    dest: /var/www/relay/idb/message_style.css
-    mode: 0644
-    owner: www-data
-    group: message-relays
-  notify: restart_bridgebot
-
 - name: Generate the irc-discord-bridgebot config
   become: yes
   ansible.builtin.template:
-    dest: /etc/irc-discord-bridgebot.env
-    src: irc-discord-bridgebot.env.j2
+    dest: /etc/idb.toml
+    src: idb.toml.j2
     owner: root
-    group: root
-    mode: 0600
+    group: message-relays
+    mode: 0640
 
 # vim: sw=2 et :
