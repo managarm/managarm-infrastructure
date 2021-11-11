@@ -5,7 +5,6 @@ set -xe
 umask 027
 cd /var/lib/acme
 if [ -z "$1" ]; then
-	disable_reload=no
 	set -- {{ acme_domains | map('quote') | join(' ') }}
 fi
 
@@ -21,4 +20,3 @@ for domain; do
 	chmod 644 "./certs/$domain/certificate.pem"
 	chown acme:www-data "./certs/$domain/certificate.pem"
 done
-[ -z "$disable_reload" ] && sudo systemctl reload nginx

@@ -30,12 +30,12 @@
   become: yes
   become_user: root
   ansible.builtin.template:
-    src: '{{ item }}'
-    dest: '/etc/nginx/conf.d/'
+    src: '{{ item }}.j2'
+    dest: '/etc/nginx/conf.d/{{ item }}'
     mode: 0644
   loop:
-    - ssl.conf.j2
-    - ffdhe2048.txt.j2
+    - ssl.conf
+    - ffdhe2048.txt
   notify: nginx
 
 - name: Remove default nginx site
