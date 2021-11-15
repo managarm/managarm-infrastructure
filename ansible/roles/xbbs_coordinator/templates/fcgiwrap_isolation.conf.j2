@@ -1,0 +1,44 @@
+# {{ ansible_managed }}
+
+[Service]
+ProtectProc=noaccess
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+PrivateNetwork=true
+PrivateIPC=true
+RemoveIPC=true
+PrivateUsers=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProcSubset=pid
+ProtectHostname=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ProtectClock=true
+ProtectControlGroups=true
+MemoryDenyWriteExecute=true
+
+IPAddressAllow=localhost
+IPAddressDeny=any
+
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+SystemCallArchitectures=native
+RestrictAddressFamilies=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+
+RestrictNamespaces=true
+RestrictRealtime=true
+
+TemporaryFileSystem=/var/lib:ro
+BindReadOnlyPaths=/var/lib/xbbs/mirror_build:/var/lib/xbbs/mirror_build:norbind
+
+# vim: ft=systemd :

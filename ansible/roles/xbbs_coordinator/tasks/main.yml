@@ -1,4 +1,20 @@
 ---
+- name: Install fcgiwrap (for git-http-backend)
+  become: yes
+  ansible.builtin.apt:
+    pkg: [fcgiwrap]
+  notify: fcgiwrap_service
+
+- name: Install fcgiwrap isolation drop-in
+  become: yes
+  ansible.builtin.template:
+    owner: root
+    group: root
+    mode: 0666
+    src: fcgiwrap_isolation.conf.j2
+    dest: '/etc/systemd/system/fcgiwrap.service.d/isolate.conf'
+  notify: fcgiwrap_service
+
 - name: Install xbstrap and xbbs from git
   become: yes
   become_user: root

@@ -9,4 +9,13 @@
     state: restarted
   loop: ["coordinator", "web", "webhooks"]
 
+- name: fcgiwrap_service
+  become: yes
+  ansible.builtin.systemd:
+    name: fcgiwrap.{{ item }}
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
+  loop: [socket, service]
+
 # vim: sw=2 et :
