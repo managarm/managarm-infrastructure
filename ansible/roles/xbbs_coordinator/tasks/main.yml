@@ -107,6 +107,27 @@
     - zeus
     - hades
 
+- name: Create mirror build link
+  become: yes
+  become_user: xbbs
+  ansible.builtin.file:
+    state: link
+    force: yes
+    follow: no
+    path: '/var/lib/xbbs/projects/{{ item.key }}/mirror_build'
+    src: '/var/lib/xbbs/mirror_build'
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+
+- name: Create mirror build directory
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    state: directory
+    path: '/var/lib/xbbs/mirror_build'
+    owner: xbbs
+    group: xbbs
+    mode: 0755
+
 - name: Create current build link in mirrors
   become: yes
   become_user: root
@@ -114,10 +135,9 @@
     state: link
     force: yes
     follow: no
-    path: '/var/www/mirrors/currents/{{ item }}'
-    src: '/var/lib/xbbs/projects/{{ item }}/current'
-  loop: [managarm, managarm_aarch64, managarm_riscv]
-  # TODO(arsen): DRY
+    path: '/var/www/mirrors/currents/{{ item.key }}'
+    src: '/var/lib/xbbs/projects/{{ item.key }}/current'
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
 
 - name: Upload xbbs-project-rotate
   become: yes
@@ -131,25 +151,25 @@
   become: yes
   become_user: xbbs
   ansible.builtin.cron:
-    name: 'xbbs-project-rotate-{{ item }}'
+    name: 'xbbs-project-rotate-{{ item.key }}'
     minute: '0'
     hour: '21'
     job: >-
-      cd /var/lib/xbbs/projects/{{ item|quote }} &&
+      cd /var/lib/xbbs/projects/{{ item.key|quote }} &&
       chronic /var/lib/xbbs/xbbs-project-rotate
-  loop: [managarm, managarm_aarch64, managarm_riscv]
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
 
 - name: Run weekly full rebuilds
   become: yes
   become_user: xbbs
   ansible.builtin.cron:
-    name: 'xbbs-full-rebuild-{{ item }}'
+    name: 'xbbs-full-rebuild-{{ item.key }}'
     minute: '0'
     hour: '1'
     dow: '7'
     job: >-
-      . /etc/profile; chronic xbbs-cli build --no-incremental {{ item|quote }}
-  loop: [managarm, managarm_aarch64, managarm_riscv]
+      . /etc/profile; chronic xbbs-cli build --no-incremental {{ item.key|quote }}
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
 
 # not included:
 # - pkgs/repos # managed in the distributions role

@@ -5,6 +5,16 @@ server {
 	autoindex on;
 	server_name mirrors.managarm.org;
 
+	location /mirror/git/ {
+		rewrite  ^/mirror/git/(.*) /$1 break;
+		fastcgi_pass  unix:/run/fcgiwrap.socket;
+		include       fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME     /usr/lib/git-core/git-http-backend;
+		fastcgi_param GIT_HTTP_EXPORT_ALL "yes";
+		fastcgi_param GIT_PROJECT_ROOT    /var/lib/xbbs/mirror_build/mirror/git;
+		fastcgi_param PATH_INFO           $uri;
+	}
+
 	root /var/www/mirrors;
 
 	{{ h.ssl_keys("mirrors.managarm.org") }}
