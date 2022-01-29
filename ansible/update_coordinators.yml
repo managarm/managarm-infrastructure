@@ -5,7 +5,7 @@
 - hosts: coordinators
   become: yes
   tasks:
-    - ansible.builtin.pip: name=git+https://github.com/managarm/xbbs.git state=latest
+    - ansible.builtin.pip: name=git+https://github.com/managarm/xbbs.git state=forcereinstall
     - ansible.builtin.systemd: unit=xbbs-web state=restarted
     - ansible.builtin.systemd: unit=xbbs-webhooks state=restarted
     - ansible.builtin.systemd: unit=xbbs-coordinator state=restarted

@@ -2,6 +2,6 @@
 - hosts: coordinators:workers
   become: yes
   tasks:
-    - ansible.builtin.pip: name=git+https://github.com/managarm/xbstrap.git state=latest
+    - ansible.builtin.pip: name=git+https://github.com/managarm/xbstrap.git state=forcereinstall
 
 # vim: et sw=2 :
