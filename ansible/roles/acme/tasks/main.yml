@@ -3,7 +3,7 @@
   become: yes
   become_user: root
   ansible.builtin.apt:
-    pkg: acme-tiny
+    pkg: acme-tiny moreutils
 
 - name: Create acme user
   become: yes
