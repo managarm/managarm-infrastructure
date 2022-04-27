@@ -78,6 +78,14 @@
     mode: 0755
   loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
 
+- name: Make project distrib roots
+  become: true
+  become_user: xbbs
+  ansible.builtin.file:
+    path: "/var/lib/xbbs/projects/{{ item.key }}/distrib"
+    state: directory
+  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+
 - name: Copy signing public key
   become: true
   become_user: xbbs
@@ -122,6 +130,15 @@
     - repos/buildenv
     - zeus
     - hades
+
+- name: Link distribution repositories
+  become: yes
+  become_user: xbbs
+  ansible.builtin.file:
+    state: link
+    src: '{{ item.value }}'
+    dest: '/var/lib/xbbs/projects/{{ item.key }}/distrib/package_repo'
+  loop: "{{ xbbs_cfg.distrib_repos|dict2items }}"
 
 - name: Create mirror build link
   become: yes

@@ -24,6 +24,8 @@ xbbs_cfg:
     managarm/fafnir: [managarm, managarm_aarch64, managarm_riscv]
     managarm/cxxshim: [managarm, managarm_aarch64, managarm_riscv]
     managarm/bootstrap-managarm: [managarm, managarm_aarch64, managarm_riscv]
+  distrib_repos:
+    managarm: /var/www/repos/repos/amd64
 
 # TODO(arsen): this sort of config should contain more xbbs configuration,
 # specifically, the project configuration, so that we can reuse it for other
