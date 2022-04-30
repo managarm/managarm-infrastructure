@@ -6,6 +6,7 @@ xbbs_cfg:
   build_root: "/var/lib/xbbs/tmp/worker"
   webhook_bind: "127.0.0.1:17001"
   web_bind: "127.0.0.1:17000"
+  artifact_history: true
   fingerprints:
     managarm: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
     managarm_aarch64: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
@@ -30,5 +31,7 @@ xbbs_cfg:
 # TODO(arsen): this sort of config should contain more xbbs configuration,
 # specifically, the project configuration, so that we can reuse it for other
 # projects too.
+
+pgsql_users: xbbs
 
 # vim: sw=2 et :

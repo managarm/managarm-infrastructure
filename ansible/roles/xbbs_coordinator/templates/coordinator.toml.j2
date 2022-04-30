@@ -3,6 +3,9 @@ intake = "{{ xbbs_cfg.intake }}"
 worker_endpoint = "{{ xbbs_cfg.worker_endpoint }}"
 project_base = "/var/lib/xbbs/projects"
 build_root = "{{ xbbs_cfg.build_root }}"
+{%- if xbbs_cfg.artifact_history -%}
+artifact_history = true
+{%- endif -%}
 
 [projects.managarm]
 git = "https://github.com/managarm/bootstrap-managarm.git"
