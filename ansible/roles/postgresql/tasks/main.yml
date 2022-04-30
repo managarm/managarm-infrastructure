@@ -1,0 +1,28 @@
+---
+- name: Add PostgreSQL repository keys
+  become: yes
+  ansible.builtin.apt_key:
+    id: b97b0afcaa1a47f044f244a07fcc7d46accc4cf8
+    keyserver: keyserver.ubuntu.com
+
+# we use this repository because of PGSQLs ridiculously long term support.
+- name: Add PostgreSQL repositories
+  become: yes
+  ansible.builtin.apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main
+    state: present
+
+- name: Install PostgreSQL
+  become: yes
+  ansible.builtin.apt:
+    pkg:
+      - postgresql-{{ pgsql_ver }}
+      - python3-psycopg2
+      - libpq-dev
+
+- name: Create PostgreSQL role and DB
+  become: yes
+  become_user: postgres
+  postgres_init:
+    wants: "{{ pgsql_users }}"
+# vim: sw=2 et :

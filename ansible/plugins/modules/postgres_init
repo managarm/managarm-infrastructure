@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+"""
+     author : Arsen Arsenović <arsen@aarsen.me>
+       code : github.com/managarm/managarm-infrastructure
+    project : managarm-infrastructure
+description : A module that creates roles and their DBs, with minimal permissions
+    license : MIT
+"""
+
+from ansible.module_utils.basic import AnsibleModule
+import psycopg2
+import psycopg2.errors
+from psycopg2.sql import SQL, Identifier
+
+
+def main():
+    module = AnsibleModule(
+        argument_spec={
+            "wants": {"required": True, "type": "list", "elements": "str"},
+            "connection": {"type": "str", "default": ""},
+        }
+    )
+
+    params = module.params
+    has_changed = False
+    conn = psycopg2.connect(params["connection"])
+    conn.autocommit = True
+
+    with conn.cursor() as cur:
+        for name in params["wants"]:
+            name = Identifier(name)
+            try:
+                cur.execute(SQL("CREATE DATABASE {}").format(name))
+                has_changed = True
+            except psycopg2.errors.DuplicateDatabase:
+                pass
+
+            try:
+                cur.execute(SQL("CREATE USER {}").format(name))
+                cur.execute(SQL("GRANT ALL ON DATABASE {x} TO {x}").format(x=name))
+                has_changed = True
+            except psycopg2.errors.DuplicateObject:
+                pass
+
+    conn.close()
+    module.exit_json(changed=has_changed)
+
+
+if __name__ == "__main__":
+    main()

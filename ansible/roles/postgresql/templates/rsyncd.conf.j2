@@ -1,0 +1,21 @@
+# /etc/rsyncd.conf
+
+# Minimal configuration file for rsync daemon
+# See rsync(1) and rsyncd.conf(5) man pages for help
+
+# This line is required by the /etc/init.d/rsyncd script
+pid file = /run/rsyncd.pid
+use chroot = yes
+port = {{ rsyncd_port }}
+address = {{ rsyncd_address }}
+uid = {{ rsyncd_uid }}
+gid = {{ rsyncd_gid }}
+{% if rsyncd_haproxy_protocol %}
+proxy protocol = true
+{% endif %}
+secrets file = /etc/rsyncd.secrets
+motd file = /etc/rsyncd.motd
+auth users =
+
+&include /etc/rsyncd.d
+# {{ ansible_managed }}

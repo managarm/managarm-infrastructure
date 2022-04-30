@@ -1,0 +1,9 @@
+---
+- name: postgresql
+  become: yes
+  become_user: root
+  ansible.builtin.systemd:
+    name: postgresql
+    enabled: yes
+
+# vim: sw=2 et :
