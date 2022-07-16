@@ -4,6 +4,7 @@ span.small {
 }
 
 a, body {
+	font-family: sans-serif;
 	color: #222;
 }
 
