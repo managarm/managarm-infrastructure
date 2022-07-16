@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<!-- {{ ansible_managed }} -->
+<head>
+	<title>The Managarm documentation index</title>
+	<link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+	<h1>The Managarm documentation index</h1>
+	<ul>
+{%- for doc in docs_modules -%}
+		<li class="doc">
+			<h2>
+				<a href="{{ doc["path"] }}">{{ doc.name }}</a>
+				<span class="small">
+					<a href="{{ doc["source"] }}">[source]</a>
+				</span>
+			</h2>
+			<p>{{ doc["description"] }}</p>
+		</li>
+{%- endfor -%}
+	</ul>
+</html>

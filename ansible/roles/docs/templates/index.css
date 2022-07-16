@@ -1,0 +1,15 @@
+/* {{ ansible_managed }} */
+span.small {
+	font-size: 0.75rem;
+}
+
+a, body {
+	color: #222;
+}
+
+ul {
+	list-style-type: none;
+	padding-left: 1.5em;
+	margin: 0;
+}
+

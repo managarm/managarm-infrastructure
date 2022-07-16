@@ -119,9 +119,6 @@
     group: www-data
     mode: 0755
   loop:
-    - docs
-    - docs/handbook
-    - docs/hel-api
     - mirrors
     - mirrors/currents
     - repos

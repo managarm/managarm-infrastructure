@@ -5,12 +5,16 @@
     - buster_backports
     - wireguard_star
 
+- hosts: hades.hosts.managarm.org
+  roles:
+    - docs
+    - rsyncd
+    - distribution
+
 - hosts: coordinators
   roles:
     - postgresql
     - xbbs_coordinator
-    - rsyncd
-    - distribution
 
 - hosts: workers
   roles:

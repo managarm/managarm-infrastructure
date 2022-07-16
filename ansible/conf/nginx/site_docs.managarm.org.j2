@@ -5,20 +5,7 @@ server {
 	server_name docs.managarm.org;
 
 	root /var/www/docs;
-
-	location /hel-api/ {
-		autoindex on;
-		break;
-	}
-
-	location /handbook/ {
-		autoindex on;
-		break;
-	}
-
-	location = / {
-		return 301 https://$host/handbook/;
-	}
+	autoindex off;
 
 	{{ h.ssl_keys("docs.managarm.org") }}
 }

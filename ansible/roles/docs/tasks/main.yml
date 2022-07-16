@@ -1,0 +1,26 @@
+---
+- name: Create web directory structure
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    state: directory
+    path: '/var/www/docs/{{ item.path }}'
+    owner: www-data
+    group: www-data
+    mode: 0755
+  loop: '{{ docs_modules }}'
+
+- name: Install index
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    dest: '/var/www/docs/{{ item }}'
+    src: '{{ item }}'
+    owner: www-data
+    group: www-data
+    mode: 0644
+  loop:
+    - index.css
+    - index.html
+
+# vim: sw=2 et :

@@ -22,4 +22,20 @@ acme_units:
   - dovecot.service
   - postfix.service
 
+# watch out not to add HTML tags here
+# the jinja context ansible uses is scuffed
+docs_modules:
+  - path: handbook
+    name: The Managarm handbook
+    description: A conceptual and technical overview of the Managarm system
+    source: https://github.com/managarm/managarm/tree/master/docs
+  - path: hel-api
+    name: Hel API reference
+    description: Doxygen reference for the Hel system call layer
+    source: https://github.com/managarm/managarm/tree/master/hel
+  - path: libasync
+    name: libasync
+    description: libasync conceptual overview and API reference
+    source: https://github.com/managarm/libasync/tree/master/docs
+
 # vim: sw=2 et :
