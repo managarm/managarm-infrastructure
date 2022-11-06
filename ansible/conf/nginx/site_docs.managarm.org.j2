@@ -4,6 +4,12 @@ server {
 	listen 443 ssl http2;
 	server_name docs.managarm.org;
 
+{% for x in docs_modules %}
+	location /{{ x.path }} {
+		error_page 404 /{{ x.path }}/404.html;
+	}
+{% endfor %}
+
 	root /var/www/docs;
 	autoindex off;
 
