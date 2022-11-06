@@ -8,15 +8,22 @@ if [ -z "$1" ]; then
 	set -- {{ acme_domains | map('quote') | join(' ') }}
 fi
 
+bad=
+
 for domain; do
 	acme-tiny --account-key ./account_key.pem \
 		--contact mailto:{{ acme_contact_email|quote }} \
 		--directory-url {{ acme_directory_url|quote }} \
 		--csr "certs/$domain/csr.pem" \
 		--acme-dir "/var/lib/acme/challenges" \
-		> "./certs/$domain/.certificate.pem.tmp"
+		> "./certs/$domain/.certificate.pem.tmp" || { bad="$bad $domain"; continue; }
 	mv "./certs/$domain/.certificate.pem.tmp" \
 		"./certs/$domain/certificate.pem"
 	chmod 644 "./certs/$domain/certificate.pem"
 	chown acme:www-data "./certs/$domain/certificate.pem"
 done
+
+if [ -n "${bad}" ]; then
+    printf 'Some certs failed to fetch:%s\n' "${bad}"
+    exit 1
+fi
