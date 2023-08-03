@@ -5,8 +5,9 @@ server {
 	server_name relay.managarm.org;
 
 	location /idb/ {
-		proxy_redirect http:// https://;
 		proxy_pass     http://localhost:8113/;
+		proxy_redirect default;
+		proxy_redirect / /idb/;
 	}
 
 	location / {
