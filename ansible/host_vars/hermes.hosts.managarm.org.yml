@@ -30,5 +30,9 @@ bridge:
       irc_channel: '#managarm-misc'
     "888101472313700372":
       irc_channel: '#managarm-riscv'
+    "799340026198360065":
+      irc_channel: '#managarm-social'
+    "680472949790343178":
+      irc_channel: '#managarm-contrib'
 
 # vim: sw=2 et :
