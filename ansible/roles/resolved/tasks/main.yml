@@ -1,0 +1,20 @@
+---
+- name: Ensure the usage of Quad9 DNS servers
+  become: yes
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: ^DNS=
+    insertafter: '\[Resolve\]'
+    line: 'DNS=9.9.9.10#dns.quad9.net 149.112.112.112#dns.quad9.net 2620:fe::fe#dns.quad9.net 2620:fe::9#dns.quad9.net'
+- name: Enable the resolved service
+  become: yes
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: yes
+    name: systemd-resolved.service
+- name: Use systemd-resolved stub
+  become: yes
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    state: link
+    src: ../run/systemd/resolve/stub-resolv.conf
