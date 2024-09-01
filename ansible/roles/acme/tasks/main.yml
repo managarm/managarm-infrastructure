@@ -133,7 +133,7 @@
     minute: '0'
     hour: '0'
     dow: '0'
-    job: 'chronic /var/lib/acme/update_certs.sh && chronic sudo systemctl reload acme-updated.service'
+    job: 'chronic /var/lib/acme/update_certs.sh; chronic sudo systemctl reload acme-updated.service'
 
 
 # vim: sw=2 et :
