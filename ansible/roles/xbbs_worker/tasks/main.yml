@@ -22,7 +22,7 @@
       - git+https://github.com/managarm/xbbs.git
   notify: xbbs_worker
 
-- name: Install xbstrap and xbbs from git
+- name: Install libguestfs
   become: yes
   become_user: root
   ansible.builtin.apt:
