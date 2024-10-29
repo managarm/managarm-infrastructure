@@ -32,6 +32,7 @@ entry::
 """
 
 import argparse
+import datetime
 import os
 import pwd
 import shutil
@@ -39,7 +40,7 @@ import subprocess
 from urllib.parse import urljoin
 
 import attr
-from discord_webhook import DiscordEmbed, DiscordWebhook
+import requests
 import toml
 
 max_discord_embeds = 10
@@ -125,21 +126,32 @@ def main(args):
 			'-S'] + all_dest_paths)
 
 	# Send a webhook.
+	timestamp = datetime.datetime.now(datetime.UTC).isoformat(timespec='seconds')
 	for some_pkgs in split_chunks(pkgs, max_discord_embeds):
-		webhook = DiscordWebhook(url=secret['discord_hook']['webhook_url'])
-
-		for pkg in some_pkgs:
-			pkg_url = urljoin(conf['repositories']['distro_url'], pkg.xbps_file)
-			title='Package updated: {} is now at {}'.format(pkg.name, pkg.version)
-			embed = DiscordEmbed(title=title, url=pkg_url)
-			embed.set_timestamp()
-			embed.set_author(name=realname)
-			embed.add_embed_field(name='Architecture', value='x86_64')
-			embed.add_embed_field(name='Maintainer email', value=email)
-			webhook.add_embed(embed)
-
-		response = webhook.execute()
+		requests.post(secret['discord_hook']['webhook_url'], json={
+			'embeds': [
+				{
+					'type': 'rich',
+					'title': 'Package updated: {} is now at {}'.format(pkg.name, pkg.version),
+					'url': urljoin(conf['repositories']['distro_url'], pkg.xbps_file),
+					'timestamp': timestamp,
+					'author': dict(name=realname),
+					'fields': [
+						dict(name='Architecture',
+						     value='x86_64'),
+						dict(name='Maintainer email',
+						     value=email)
+					]
+				}
+				for pkg in some_pkgs
+			]
+		})
 
 parser = argparse.ArgumentParser()
 parser.add_argument('pkgs', type=str, nargs='+')
 main(parser.parse_args())
+
+# Local Variables:
+# python-indent-offset: 8
+# indent-tabs-mode: t
+# End:
