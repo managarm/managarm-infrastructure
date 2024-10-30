@@ -15,12 +15,11 @@
 
 - name: Install approve-distro deps
   become: yes
-  ansible.builtin.pip:
+  ansible.builtin.apt:
     state: present
     name:
-      - discord-webhook
-      - attrs
-      - toml
+      - python3-toml
+      - python3-requests
 
 - name: Create maintainer group
   become: yes

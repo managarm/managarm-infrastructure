@@ -4,7 +4,7 @@ Description=xbbs worker
 [Service]
 User=xbbs
 Group=xbbs
-ExecStart=/usr/local/bin/xbbs-worker
+ExecStart={{ xbbs_virtualenv }}/bin/xbbs-worker
 Environment=XBPS_ARCH=x86_64 XBSTRAP_HOME={{ xbbs_cfg.xbstrap_home }}
 
 

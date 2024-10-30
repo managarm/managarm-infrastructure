@@ -20,6 +20,8 @@
     name:
       - git+https://github.com/managarm/xbstrap.git
       - git+https://github.com/managarm/xbbs.git
+      - y4
+    virtualenv: '{{ xbbs_virtualenv }}'
   notify: xbbs_worker
 
 - name: Install libguestfs

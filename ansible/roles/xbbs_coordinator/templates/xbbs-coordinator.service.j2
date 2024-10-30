@@ -4,7 +4,7 @@ Description=xbbs coordinator
 [Service]
 User=xbbs
 Group=xbbs
-ExecStart=/usr/local/bin/xbbs-coordinator
+ExecStart={{ xbbs_virtualenv }}/bin/xbbs-coordinator
 # TODO(arsen): FIX THIS
 Environment=XBPS_ARCH=x86_64
 

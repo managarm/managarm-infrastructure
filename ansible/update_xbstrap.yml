@@ -2,6 +2,11 @@
 - hosts: coordinators:workers
   become: yes
   tasks:
-    - ansible.builtin.pip: name=git+https://github.com/managarm/xbstrap.git state=forcereinstall
+    - ansible.builtin.pip:
+        name:
+          - git+https://github.com/managarm/xbstrap.git
+          - y4
+        state: forcereinstall
+        virtualenv: '{{ xbbs_virtualenv }}'
 
 # vim: et sw=2 :

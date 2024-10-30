@@ -15,7 +15,7 @@
     dest: '/etc/systemd/system/fcgiwrap.service.d/isolate.conf'
   notify: fcgiwrap_service
 
-- name: Install xbstrap and xbbs from git
+- name: Install xbstrap, xbbs and co.
   become: yes
   become_user: root
   ansible.builtin.pip:
@@ -23,6 +23,9 @@
     name:
       - git+https://github.com/managarm/xbstrap.git
       - git+https://github.com/managarm/xbbs.git
+      - y4
+      - gunicorn
+    virtualenv: '{{ xbbs_virtualenv }}'
   notify: xbbs_coordinator_services
 
 - name: Generate coordinator configuration

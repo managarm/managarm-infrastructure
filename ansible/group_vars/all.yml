@@ -1,4 +1,7 @@
 ---
 acme_contact_email: info@managarm.org
 
+# where to install xbstrap and xbbs
+xbbs_virtualenv: "/var/lib/xbbs/xbbs_virtualenv"
+
 # vim: sw=2 et :

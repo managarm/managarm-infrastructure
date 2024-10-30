@@ -5,7 +5,10 @@
 - hosts: workers
   become: yes
   tasks:
-    - ansible.builtin.pip: name=git+https://github.com/managarm/xbbs.git state=forcereinstall
+    - ansible.builtin.pip:
+        name: git+https://github.com/managarm/xbbs.git
+        state: forcereinstall
+        virtualenv: '{{ xbbs_virtualenv }}'
     - ansible.builtin.systemd: unit=xbbs-worker state=restarted
 
 # vim: et sw=2 :

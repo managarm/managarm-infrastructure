@@ -10,6 +10,7 @@
       - python3
       - python3-dev
       - python3-pip
+      - python3-virtualenv
       - moreutils
       - mercurial
       - subversion
@@ -43,6 +44,16 @@
     state: directory
     owner: xbbs
     group: xbbs
+    mode: 0755
+
+- name: Create virtualenv directory
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    path: '{{ xbbs_virtualenv }}'
+    state: directory
+    owner: root
+    group: root
     mode: 0755
 
 # vim: sw=2 et :
