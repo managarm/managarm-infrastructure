@@ -126,7 +126,7 @@ def main(args):
 			'-S'] + all_dest_paths)
 
 	# Send a webhook.
-	timestamp = datetime.datetime.now(datetime.UTC).isoformat(timespec='seconds')
+	timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
 	for some_pkgs in split_chunks(pkgs, max_discord_embeds):
 		requests.post(secret['discord_hook']['webhook_url'], json={
 			'embeds': [
