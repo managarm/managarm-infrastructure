@@ -4,9 +4,8 @@ Description=xbbs worker
 [Service]
 User=xbbs
 Group=xbbs
-ExecStart={{ xbbs_virtualenv }}/bin/xbbs-worker
+ExecStart=/bin/sh -xec '. '{{ xbbs_virtualenv|quote }}/bin/activate'; exec xbbs-worker'
 Environment=XBPS_ARCH=x86_64 XBSTRAP_HOME={{ xbbs_cfg.xbstrap_home }}
-
 
 SupplementaryGroups=kvm
 

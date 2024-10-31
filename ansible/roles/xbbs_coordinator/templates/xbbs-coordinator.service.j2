@@ -4,7 +4,7 @@ Description=xbbs coordinator
 [Service]
 User=xbbs
 Group=xbbs
-ExecStart={{ xbbs_virtualenv }}/bin/xbbs-coordinator
+ExecStart=/bin/sh -xec '. '{{ xbbs_virtualenv|quote }}/bin/activate'; exec xbbs-coordinator'
 # TODO(arsen): FIX THIS
 Environment=XBPS_ARCH=x86_64
 

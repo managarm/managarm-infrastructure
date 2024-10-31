@@ -21,8 +21,10 @@
   ansible.builtin.pip:
     state: latest
     name:
-      - git+https://github.com/managarm/xbstrap.git
-      - git+https://github.com/managarm/xbbs.git
+      - 'git+https://github.com/managarm/xbstrap.git'
+      # Valideer updated for py3.11
+      - 'https://github.com/ArsenArsen/valideer/archive/cec1755914c21628706bb1392e0c61c6c600318e.tar.gz'
+      - 'xbbs[history] @ git+https://github.com/managarm/xbbs.git'
       - y4
       - gunicorn
     virtualenv: '{{ xbbs_virtualenv }}'

@@ -18,6 +18,8 @@
   ansible.builtin.pip:
     state: latest
     name:
+      # Valideer updated for py3.11
+      - 'https://github.com/ArsenArsen/valideer/archive/cec1755914c21628706bb1392e0c61c6c600318e.tar.gz'
       - git+https://github.com/managarm/xbstrap.git
       - git+https://github.com/managarm/xbbs.git
       - y4
