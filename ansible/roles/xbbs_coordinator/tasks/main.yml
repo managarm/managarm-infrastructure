@@ -203,7 +203,7 @@
     hour: '1'
     dow: '7'
     job: >-
-      . /etc/profile; chronic xbbs-cli build --no-incremental {{ item.key|quote }}
+      . /etc/profile; chronic {{ xbbs_virtualenv|quote }}/bin/xbbs-cli build --no-incremental {{ item.key|quote }}
   loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
 
 # not included:
