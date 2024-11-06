@@ -177,10 +177,13 @@
 - name: Upload xbbs-project-rotate
   become: yes
   become_user: root
-  ansible.builtin.copy:
-    src: 'xbbs-project-rotate'
+  ansible.builtin.template:
+    src: 'xbbs-project-rotate.j2'
     dest: '/var/lib/xbbs/xbbs-project-rotate'
+    owner: root
+    group: root
     mode: 0755
+
 
 - name: Add rotation cronjobs
   become: yes

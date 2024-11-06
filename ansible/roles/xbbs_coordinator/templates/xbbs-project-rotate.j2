@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!{{ xbbs_virtualenv }}/bin/python
 # SPDX-License-Identifier: GPL-3.0-only
 """
 Looks for builds of the given project (or cwd), removes outdated artifacts and
@@ -71,3 +71,7 @@ for fp, exc in exception_list:
     print(f"{fp}: {exc}", file=sys.stderr)
 
 exit(1)
+
+# Local Variables:
+# mode: python
+# End:
