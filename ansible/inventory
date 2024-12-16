@@ -5,12 +5,16 @@ hades.hosts.managarm.org
 sunset.contrib.hosts.managarm.org
 raptor.dennisbonke.com
 tictac.aarsen.me
+bearservers.net
+chopin.mrvn.sh
 
 [wg_worknet]
 hades.hosts.managarm.org wg_ip=10.0.69.1
 sunset.contrib.hosts.managarm.org wg_ip=10.0.69.2
 raptor.dennisbonke.com wg_ip=10.0.69.3
 tictac.aarsen.me wg_ip=10.0.69.4
+bearservers.net wg_ip=10.0.69.5
+chopin.mrvn.sh wg_ip=10.0.69.6
 
 [wg_worknet:vars]
 wgstar_router=hades.hosts.managarm.org
