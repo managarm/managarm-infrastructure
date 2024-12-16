@@ -12,8 +12,8 @@
   become_user: root
   ansible.builtin.get_url:
     dest: /var/cache/managarm/ansible/xbbs-static.tar.xz
-    checksum: "sha256:fb6dd121053f50147790bf81194f5ea96e08f852c0b38b21d607f7fa8f18f19e"
-    url: https://alpha.de.repo.voidlinux.org/static/xbps-static-static-0.59_5.x86_64-musl.tar.xz
+    checksum: "sha256:7b861229717f0cadea1af049fa123d252d44b92e4534c0f1b6d1c16e3a103056"
+    url: https://repo-default.voidlinux.org/static/xbps-static-static-0.59.2_1.x86_64-musl.tar.xz
 
 - name: Create xbps keys directory
   become: yes
