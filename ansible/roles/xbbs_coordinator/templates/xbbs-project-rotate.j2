@@ -14,6 +14,8 @@ from datetime import datetime, timedelta, timezone
 
 import xbbs.util as xutils
 
+MAX_DAYS_RETAINED = 14
+
 if len(sys.argv) > 1:
     os.chdir(sys.argv[1])
 
@@ -38,7 +40,7 @@ for i, f in enumerate(coord_file_list):
 
 TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
-passed_month = False
+passed_max_retention = False
 exception_list = []
 
 
@@ -49,11 +51,11 @@ def rmtree_errors(fn, path, excinfo):
 
 for f in remove_list:
     tsdir = path.dirname(f)
-    if not passed_month:
+    if not passed_max_retention:
         delta = datetime.now(timezone.utc) - \
                 xutils.strptime(tsdir, xutils.TIMESTAMP_FORMAT)
-        if delta > timedelta(days=30):
-            passed_month = True
+        if delta > timedelta(days=MAX_DAYS_RETAINED):
+            passed_max_retention = True
     else:
         shutil.rmtree(tsdir, onerror=rmtree_errors)
         continue
