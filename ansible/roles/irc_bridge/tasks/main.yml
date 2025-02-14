@@ -20,7 +20,7 @@
 - name: Download the bridge
   become: yes
   ansible.builtin.get_url:
-    url: http://cdn.aarsen.me/builds/irc-discord-bridgebot/master
+    url: https://cdn.aarsen.me/builds/irc-discord-bridgebot/master
     dest: /usr/local/bin/irc-discord-bridgebot
     mode: 0755
   notify: restart_bridgebot
