@@ -6,7 +6,11 @@ Before=nginx.service
 User=xbbs
 Group=www-data
 Environment=XBBS_PROJECT_BASE=/var/lib/xbbs/projects XBBS_COORDINATOR_ENDPOINT={{ xbbs_cfg.command_endpoint }}
-ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -b {{ xbbs_cfg.web_bind }} xbbs.web:app
+ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -t 120 -b {{ xbbs_cfg.web_bind }} xbbs.web:app
 
 [Install]
 WantedBy=default.target
+
+# Local Variables:
+# mode: conf
+# End:
