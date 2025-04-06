@@ -15,6 +15,7 @@ raptor.dennisbonke.com wg_ip=10.0.69.3
 tictac.aarsen.me wg_ip=10.0.69.4
 bearservers.net wg_ip=10.0.69.5
 chopin.mrvn.sh wg_ip=10.0.69.6
+fuji.that-wont.work wg_ip=10.0.69.7
 
 [wg_worknet:vars]
 wgstar_router=hades.hosts.managarm.org
