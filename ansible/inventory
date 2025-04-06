@@ -1,4 +1,4 @@
-[coordinators]
+[coordinators]  # -*- conf -*-
 hades.hosts.managarm.org
 
 [workers]
