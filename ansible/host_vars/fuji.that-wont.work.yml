@@ -1,3 +1,4 @@
 # Accessible via the WG only
 ansible_ssh_extra_args: '-J hades.hosts.managarm.org'
 ansible_ssh_host: '{{ wg_ip }}'
+should_test_xbbs_images: true

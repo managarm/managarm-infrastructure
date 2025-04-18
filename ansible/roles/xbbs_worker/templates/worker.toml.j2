@@ -1,4 +1,5 @@
+# {{ ansible_managed }} -*- conf-toml -*-
 job_endpoint = "{{ xbbs_cfg.job_endpoint }}"
-capabilities = [{{ '"kvm",' if ansible_facts.has_kvm }} {{'"fuse"' if ansible_facts.has_fuse }}]
+capabilities = [{{ '"kvm",' if ansible_facts.has_kvm }} {{'"fuse",' if ansible_facts.has_fuse }} {{'"test-images",' if should_test_xbbs_images }}]
 
 # vim: ft=toml :

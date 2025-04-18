@@ -3,4 +3,6 @@ xbbs_cfg:
   xbstrap_home: "/var/lib/xbbs/xbstrap_home"
   job_endpoint: "tcp://{{ hostvars[wgstar_router].wg_ip }}:16001"
 
+should_test_xbbs_images: false
+
 # vim: sw=2 et :
