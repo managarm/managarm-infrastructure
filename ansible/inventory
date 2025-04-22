@@ -3,7 +3,7 @@ hades.hosts.managarm.org
 
 [workers]
 sunset.contrib.hosts.managarm.org
-raptor.dennisbonke.com
+# raptor.dennisbonke.com
 # tictac.aarsen.me
 bearservers.net
 chopin.mrvn.sh
