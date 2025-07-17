@@ -1,49 +1,63 @@
-command_endpoint = "{{ xbbs_cfg.command_endpoint }}"
-intake = "{{ xbbs_cfg.intake }}"
-worker_endpoint = "{{ xbbs_cfg.worker_endpoint }}"
-project_base = "/var/lib/xbbs/projects"
-build_root = "{{ xbbs_cfg.build_root }}"
-{% if xbbs_cfg.artifact_history %}
-artifact_history = true
-{% endif %}
+# {{ ansible_managed }}
+
+http_bind = { host = "{{ xbbs_cfg.bind_address }}", port = {{ xbbs_cfg.bind_port }} }
+work_root = "/var/lib/xbbs/"
 
 [projects.managarm]
-git = "https://github.com/managarm/bootstrap-managarm.git"
+name = "Managarm (x86_64)"
 description = "Pragmatic microkernel-based OS with fully asynchronous I/O"
+git = "https://github.com/managarm/bootstrap-managarm.git"
 classes = ["managarm"]
-# external access to tools and packages repo, to be used by worker (through
-# xbps-install and just a simple tarfile download)
-packages = "https://mirrors.managarm.org/currents/managarm/package_repo"
-tools = "https://mirrors.managarm.org/currents/managarm/tool_repo"
+
+[projects.managarm.buildsystem]
+type = "xbstrap"
+distfile_path = "xbbs/x86_64"
+
+[projects.managarm.buildsystem.mirror]
+build_directory = "/var/lib/xbbs/mirror_build/"
+base_url = "https://mirrors.managarm.org/mirror/"
+
+[projects.managarm.buildsystem.signing_key]
 fingerprint = "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
-incremental = true
-distfile_path = "xbbs/x86_64/"
-mirror_root = "https://mirrors.managarm.org/mirror/"
+public_key = "/var/lib/xbbs/keys/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.plist"
+private_key = "/var/lib/xbbs/keys/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.rsa"
+
 
 [projects.managarm_aarch64]
+name = "Managarm (aarch64)"
+description = "Pragmatic microkernel-based OS with fully asynchronous I/O"
 git = "https://github.com/managarm/bootstrap-managarm.git"
-description = "Pragmatic microkernel-based OS with fully asynchronous I/O. Now on an ARM near you!"
 classes = ["managarm"]
-# external access to tools and packages repo, to be used by worker (through
-# xbps-install and just a simple tarfile download)
-packages = "https://mirrors.managarm.org/currents/managarm_aarch64/package_repo"
-tools = "https://mirrors.managarm.org/currents/managarm_aarch64/tool_repo"
-fingerprint = "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
-incremental = true
-distfile_path = "xbbs/aarch64/"
-mirror_root = "https://mirrors.managarm.org/mirror/"
 
-[projects.managarm_riscv]
+[projects.managarm_aarch64.buildsystem]
+type = "xbstrap"
+distfile_path = "xbbs/aarch64"
+
+[projects.managarm_aarch64.buildsystem.mirror]
+build_directory = "/var/lib/xbbs/mirror_build/"
+base_url = "https://mirrors.managarm.org/mirror/"
+
+[projects.managarm_aarch64.buildsystem.signing_key]
+fingerprint = "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
+public_key = "/var/lib/xbbs/keys/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.plist"
+private_key = "/var/lib/xbbs/keys/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.rsa"
+
+
+[projects.managarm_riscv64]
+name = "Managarm (RISC-V 64-bit)"
+description = "Pragmatic microkernel-based OS with fully asynchronous I/O"
 git = "https://github.com/managarm/bootstrap-managarm.git"
-description = "Pragmatic microkernel-based OS with fully asynchronous I/O. Now on a real RISC CPU!"
 classes = ["managarm"]
-# external access to tools and packages repo, to be used by worker (through
-# xbps-install and just a simple tarfile download)
-packages = "https://mirrors.managarm.org/currents/managarm_riscv/package_repo"
-tools = "https://mirrors.managarm.org/currents/managarm_riscv/tool_repo"
-fingerprint = "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
-incremental = true
-distfile_path = "xbbs/riscv64/"
-mirror_root = "https://mirrors.managarm.org/mirror/"
 
-# vim: ft=toml :
+[projects.managarm_riscv64.buildsystem]
+type = "xbstrap"
+distfile_path = "xbbs/riscv64"
+
+[projects.managarm_riscv64.buildsystem.mirror]
+build_directory = "/var/lib/xbbs/mirror_build/"
+base_url = "https://mirrors.managarm.org/mirror/"
+
+[projects.managarm_riscv64.buildsystem.signing_key]
+fingerprint = "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
+public_key = "/var/lib/xbbs/keys/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.plist"
+private_key = "/var/lib/xbbs/keys/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.rsa"

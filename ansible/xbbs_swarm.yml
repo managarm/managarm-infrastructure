@@ -13,7 +13,6 @@
 
 - hosts: coordinators
   roles:
-    - postgresql
     - xbbs_coordinator
 
 - hosts: workers

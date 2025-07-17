@@ -5,8 +5,8 @@ Before=nginx.service
 [Service]
 User=xbbs
 Group=www-data
-Environment=XBBS_PROJECT_BASE=/var/lib/xbbs/projects XBBS_COORDINATOR_ENDPOINT={{ xbbs_cfg.command_endpoint }}
-ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -t 120 -b {{ xbbs_cfg.web_bind }} xbbs.web:app
+Environment=XBBS_COORDINATOR_WORK_ROOT=/var/lib/xbbs/ XBBS_COORDINATOR_URL=http://{{ xbbs_cfg.bind_address }}:{{ xbbs_cfg.bind_port }}/
+ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -t 120 -b {{ xbbs_cfg.web_bind }} xbbs.web.wsgi:app
 
 [Install]
 WantedBy=default.target

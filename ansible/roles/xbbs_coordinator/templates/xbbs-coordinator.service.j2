@@ -5,8 +5,6 @@ Description=xbbs coordinator
 User=xbbs
 Group=xbbs
 ExecStart=/bin/sh -xec '. '{{ xbbs_virtualenv|quote }}/bin/activate'; exec xbbs-coordinator'
-# TODO(arsen): FIX THIS
-Environment=XBPS_ARCH=x86_64
 
 [Install]
 WantedBy=default.target

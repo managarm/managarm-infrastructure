@@ -5,7 +5,7 @@ Before=nginx.service
 [Service]
 User=xbbs
 Group=xbbs
-ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -b {{ xbbs_cfg.webhook_bind }} xbbs.webhooks:app
+ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -b {{ xbbs_cfg.webhook_bind }} xbbs.webhooks.wsgi:app
 
 [Install]
 WantedBy=default.target

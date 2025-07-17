@@ -1,7 +1,8 @@
-coordinator_endpoint = "{{ xbbs_cfg.command_endpoint }}"
+coordinator_url = "http://{{ xbbs_cfg.bind_address }}:{{ xbbs_cfg.bind_port }}/"
 github_secret = "{{ lookup("file", "secrets/xbbs/github_secret") }}"
+start_delay = 600
 
-[github]
+[github_repo_to_projects]
 {% for item in xbbs_cfg.hook_projects|dict2items %}
 {# this can be better #}
 {{ item.key|tojson }} = [{{ item.value|map('tojson')|join(", ") }}]

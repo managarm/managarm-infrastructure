@@ -3,7 +3,7 @@
   become: yes
   become_user: root
   ansible.builtin.apt:
-    pkg: nginx
+    pkg: [nginx, nginx-extras]
   notify: nginx
 
 - name: Generate garbage certificate

@@ -1,16 +1,13 @@
 ---
 xbbs_cfg:
-  command_endpoint: "ipc:///tmp/xbbs-coordinator-socket"
-  intake: "tcp://10.0.69.1:16999"
-  worker_endpoint: "tcp://10.0.69.1:16001"
-  build_root: "/var/lib/xbbs/tmp/worker"
+  bind_address: "10.0.69.1"
+  bind_port: 10999
   webhook_bind: "127.0.0.1:17001"
   web_bind: "127.0.0.1:17000"
-  artifact_history: true
   fingerprints:
-    managarm: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
-    managarm_aarch64: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
-    managarm_riscv: "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
+    - "5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5"
+  # Ugly.  Deduplicate with the template.
+  projects: [managarm, managarm_aarch64, managarm_riscv]
   hook_projects:
     managarm/libsmarter: [managarm, managarm_aarch64, managarm_riscv]
     managarm/managarm: [managarm, managarm_aarch64, managarm_riscv]
@@ -31,7 +28,5 @@ xbbs_cfg:
 # TODO(arsen): this sort of config should contain more xbbs configuration,
 # specifically, the project configuration, so that we can reuse it for other
 # projects too.
-
-pgsql_users: xbbs
 
 # vim: sw=2 et :

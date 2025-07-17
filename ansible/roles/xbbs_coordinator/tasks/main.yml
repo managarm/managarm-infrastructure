@@ -22,9 +22,7 @@
     state: latest
     name:
       - 'git+https://github.com/managarm/xbstrap.git'
-      # Valideer updated for py3.11
-      - 'https://github.com/ArsenArsen/valideer/archive/cec1755914c21628706bb1392e0c61c6c600318e.tar.gz'
-      - 'xbbs[history] @ git+https://github.com/managarm/xbbs.git'
+      - 'git+https://github.com/managarm/xbbs.git'
       - y4
       - gunicorn
     virtualenv: '{{ xbbs_virtualenv }}'
@@ -72,46 +70,37 @@
     owner: xbbs
     group: xbbs
 
-- name: Make project directories
+- name: Make key directory
   become: true
   become_user: xbbs
   ansible.builtin.file:
-    path: "/var/lib/xbbs/projects/{{ item.key }}/"
+    path: "/var/lib/xbbs/keys"
     state: directory
     owner: xbbs
     group: xbbs
-    mode: 0755
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
-
-- name: Make project distrib roots
-  become: true
-  become_user: xbbs
-  ansible.builtin.file:
-    path: "/var/lib/xbbs/projects/{{ item.key }}/distrib"
-    state: directory
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+    mode: 0700
 
 - name: Copy signing public key
   become: true
   become_user: xbbs
   ansible.builtin.copy:
-    src: secrets/xbbs/{{ item.value }}.plist
-    dest: "/var/lib/xbbs/projects/{{ item.key }}/{{ item.value }}.plist"
+    src: secrets/xbbs/{{ item }}.plist
+    dest: "/var/lib/xbbs/keys/{{ item }}.plist"
     owner: xbbs
     group: xbbs
     mode: 0644
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+  loop: "{{ xbbs_cfg.fingerprints }}"
 
 - name: Copy signing private key
   become: true
   become_user: xbbs
   ansible.builtin.copy:
-    src: secrets/xbbs/{{ item.value }}.rsa
-    dest: "/var/lib/xbbs/projects/{{ item.key }}/{{ item.value }}.rsa"
+    src: secrets/xbbs/{{ item }}.rsa
+    dest: "/var/lib/xbbs/keys/{{ item }}.rsa"
     owner: xbbs
     group: xbbs
-    mode: 0640
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+    mode: 0644
+  loop: "{{ xbbs_cfg.fingerprints }}"
 
 
 - name: Create web directory structure
@@ -133,26 +122,6 @@
     - zeus
     - hades
 
-- name: Link distribution repositories
-  become: yes
-  become_user: xbbs
-  ansible.builtin.file:
-    state: link
-    src: '{{ item.value }}'
-    dest: '/var/lib/xbbs/projects/{{ item.key }}/distrib/package_repo'
-  loop: "{{ xbbs_cfg.distrib_repos|dict2items }}"
-
-- name: Create mirror build link
-  become: yes
-  become_user: xbbs
-  ansible.builtin.file:
-    state: link
-    force: yes
-    follow: no
-    path: '/var/lib/xbbs/projects/{{ item.key }}/mirror_build'
-    src: '/var/lib/xbbs/mirror_build'
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
-
 - name: Create mirror build directory
   become: yes
   become_user: root
@@ -163,51 +132,30 @@
     group: xbbs
     mode: 0755
 
-- name: Create current build link in mirrors
-  become: yes
-  become_user: root
-  ansible.builtin.file:
-    state: link
-    force: yes
-    follow: no
-    path: '/var/www/mirrors/currents/{{ item.key }}'
-    src: '/var/lib/xbbs/projects/{{ item.key }}/current'
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
-
-- name: Upload xbbs-project-rotate
-  become: yes
-  become_user: root
-  ansible.builtin.template:
-    src: 'xbbs-project-rotate.j2'
-    dest: '/var/lib/xbbs/xbbs-project-rotate'
-    owner: root
-    group: root
-    mode: 0755
-
 
 - name: Add rotation cronjobs
   become: yes
   become_user: xbbs
   ansible.builtin.cron:
-    name: 'xbbs-project-rotate-{{ item.key }}'
+    name: 'xbbs-project-rotate-{{ item }}'
     minute: '0'
     hour: '21'
     job: >-
-      cd /var/lib/xbbs/projects/{{ item.key|quote }} &&
-      chronic /var/lib/xbbs/xbbs-project-rotate
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+      cd /var/lib/xbbs/projects/{{ item|quote }} &&
+      chronic /var/lib/xbbs/xbbs_virtualenv/bin/xbbs-rotate-builds
+  loop: "{{ xbbs_cfg.projects }}"
 
 - name: Run weekly full rebuilds
   become: yes
   become_user: xbbs
   ansible.builtin.cron:
-    name: 'xbbs-full-rebuild-{{ item.key }}'
+    name: 'xbbs-full-rebuild-{{ item }}'
     minute: '0'
     hour: '1'
     dow: '7'
     job: >-
-      . /etc/profile; chronic {{ xbbs_virtualenv|quote }}/bin/xbbs-cli build --no-incremental {{ item.key|quote }}
-  loop: "{{ xbbs_cfg.fingerprints|dict2items }}"
+      . /etc/profile; chronic {{ xbbs_virtualenv|quote }}/bin/xbbs-cli build --no-incremental {{ item|quote }}
+  loop: "{{ xbbs_cfg.projects }}"
 
 # not included:
 # - pkgs/repos # managed in the distributions role
