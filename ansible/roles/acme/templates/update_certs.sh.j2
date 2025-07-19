@@ -12,7 +12,6 @@ bad=
 
 for domain; do
 	acme-tiny --account-key ./account_key.pem \
-		--contact mailto:{{ acme_contact_email|quote }} \
 		--directory-url {{ acme_directory_url|quote }} \
 		--csr "certs/$domain/csr.pem" \
 		--acme-dir "/var/lib/acme/challenges" \
