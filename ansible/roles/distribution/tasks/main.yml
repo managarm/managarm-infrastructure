@@ -15,11 +15,12 @@
 
 - name: Install approve-distro deps
   become: yes
-  ansible.builtin.apt:
+  ansible.builtin.pip:
     state: present
     name:
-      - python3-toml
-      - python3-requests
+      - toml
+      - requests
+    virtualenv: '{{ xbbs_virtualenv }}'
 
 - name: Create maintainer group
   become: yes

@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/var/lib/xbbs/xbbs_virtualenv/bin/python3
+# TODO(arsen): ^ this should not be hard-coded like so
 """
 promotes packages from an unstable to a stable repository, and notifies over
 webhooks about it
@@ -11,7 +12,7 @@ approve-distro uses two configuration files:
 
     [repositories]
     signer = "The Managarm Project <info@managarm.org>"
-    source = "/var/xbbs/projects/managarm/rolling/package_repo/"
+    project_dir = "/var/xbbs/projects/managarm/"
     distro_path = "/var/www/pkgs/repos/amd64"
     distro_url = "https://pkgs.managarm.org/repos/amd64/"
     private_key = "private_key.pem"
@@ -34,6 +35,7 @@ entry::
 import argparse
 import datetime
 import os
+import os.path as path
 import pwd
 import shutil
 import subprocess
@@ -43,10 +45,17 @@ import attr
 import requests
 import toml
 
+import xbbs.utils.build_history as xbu_h
+
 max_discord_embeds = 10
 
 maintainer = os.getenv("SUDO_USER")
 invoker = int(os.getenv("SUDO_UID", "-1"))
+
+
+def find_latest_build(project_dir: str) -> str | None:
+	return max(xbu_h.get_project_builds(project_dir), default=None)
+
 
 @attr.s
 class Package:
@@ -75,9 +84,16 @@ def split_chunks(l, k):
 		yield c
 
 def main(args):
-	os.environ["XBPS_ARCH"] = "x86_64"
+	os.environ["XBPS_ARCH"] = cpu_arch = "x86_64"
 	conf = toml.load('/etc/approve-distro.toml')
 	secret = toml.load('/etc/approve-distro.secret.toml')
+	project_dir = conf['repositories']['project_dir']
+
+	latest_build = find_latest_build(project_dir)
+	if latest_build is None:
+		raise RuntimeError("No builds yet!")
+
+	repository = path.join(project_dir, latest_build, "repo/packages", cpu_arch)
 
 	pkgs = []
 	for pkgstr in args.pkgs:
@@ -110,7 +126,7 @@ def main(args):
 
 	for pkg in pkgs:
 		# Copy the file.
-		src_path = os.path.join(conf['repositories']['source'], pkg.xbps_file)
+		src_path = os.path.join(repository, pkg.xbps_file)
 		dest_path = os.path.join(conf['repositories']['distro_path'], pkg.xbps_file)
 		shutil.copyfile(src_path, dest_path)
 

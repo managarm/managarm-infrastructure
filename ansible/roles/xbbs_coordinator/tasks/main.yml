@@ -78,7 +78,8 @@
     state: directory
     owner: xbbs
     group: xbbs
-    mode: 0700
+    # distribution user needs read rights also, it's in the xbbs group
+    mode: 0750
 
 - name: Copy signing public key
   become: true

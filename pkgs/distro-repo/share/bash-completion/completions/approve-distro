@@ -20,11 +20,15 @@ import shlex
 
 with open("/etc/approve-distro.toml", "r") as f:
 	repos = toml.load(f).get("repositories", {})
-	print("src=" + shlex.quote(repos.get("source", "")))
+	print("project_dir=" + shlex.quote(repos.get("project_dir", "")))
 	print("dst=" + shlex.quote(repos.get("distro_path", "")))
 ')"
-	[ "$src" ] || return
+	[ "$project_dir" ] || return
+	latest="$(printf '%s\n' "$project_dir"/*T* | sort -r | head -n1)"
+	[ "$latest" ] || return
+	src="$latest/repo/packages/x86_64/"
 	for x in "-h" "$src"/*.xbps; do
+		if [[ "$src/*.xbps" = $x ]]; then continue; fi
 		x="${x##*/}"
 		x="${x%.xbps}"
 		if ! _approve_distro_completions_present "$x" \

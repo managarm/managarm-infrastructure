@@ -1,10 +1,10 @@
-# {{ ansible_managed }}
+# {{ ansible_managed }} -*- conf-toml -*-
 [general]
 email_domain = "managarm.org"
 
 [repositories]
 signer = "The Managarm Project <info@managarm.org>"
-source = "/var/lib/xbbs/projects/managarm/rolling/package_repo/"
+project_dir = "/var/lib/xbbs/projects/managarm/"
 distro_path = "/var/www/repos/repos/amd64"
 distro_url = "https://repos.managarm.org/repos/amd64/"
-private_key = "/var/lib/xbbs/projects/managarm/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.rsa"
+private_key = "/var/lib/xbbs/keys/5d:d2:5b:a6:50:95:c7:b9:a4:10:e4:63:39:d0:b8:c5.rsa"
