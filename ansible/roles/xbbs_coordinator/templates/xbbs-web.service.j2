@@ -6,7 +6,7 @@ Before=nginx.service
 User=xbbs
 Group=www-data
 Environment=XBBS_COORDINATOR_WORK_ROOT=/var/lib/xbbs/ XBBS_COORDINATOR_URL=http://{{ xbbs_cfg.bind_address }}:{{ xbbs_cfg.bind_port }}/
-ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -t 120 -b {{ xbbs_cfg.web_bind }} xbbs.web.wsgi:app
+ExecStart={{ xbbs_virtualenv }}/bin/gunicorn -t 120 -w {{ ansible_processor_nproc*4 }} -b {{ xbbs_cfg.web_bind }} xbbs.web.wsgi:app
 
 [Install]
 WantedBy=default.target
