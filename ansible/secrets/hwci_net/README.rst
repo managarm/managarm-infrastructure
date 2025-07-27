@@ -1,0 +1,9 @@
+roles/hwci_net secrets
+============================
+This directory contains secrets related to the ``hwci_net`` role. They consist
+of triplets of files, for the private, public and preshared key. Only one
+preshared key is required per host since each host only ever connects to one
+peer, the star router. These files are named ``{{ ansible_hostname }}``, ``{{
+ansible_hostname }}.pub`` and ``{{ ansible_hostname }}.psk`` for the private,
+public and preshared key. These can be generated using the ``../genhwci.sh``
+helper script in the parent directory, one hostname at a time.

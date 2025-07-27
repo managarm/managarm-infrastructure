@@ -23,3 +23,10 @@ wgstar_router=hades.hosts.managarm.org
 
 [bridges]
 hermes.hosts.managarm.org
+
+[hwci_net]
+hades.hosts.managarm.org hwci_ip=10.0.70.1
+crius.hosts.managarm.org hwci_ip=10.0.70.2
+
+[hwci_net:vars]
+hwci_router=hades.hosts.managarm.org

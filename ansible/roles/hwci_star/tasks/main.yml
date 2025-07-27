@@ -1,0 +1,29 @@
+---
+- name: Install WireGuard
+  become: yes
+  become_user: root
+  ansible.builtin.apt:
+    pkg:
+      - wireguard
+
+- name: Enable rp_filter
+  become: yes
+  ansible.builtin.sysctl:
+    name: net.ipv4.conf.all.rp_filter
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Install WireGuard configuration file
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: wg-hwci0.conf.j2
+    dest: /etc/wireguard/wg-hwci0.conf
+    owner: root
+    group: root
+    mode: 0640
+  notify: wireguard_hwci
+
+# vim: sw=2 et :

@@ -1,0 +1,23 @@
+[Interface]
+Address = {{ hwci_ip }}
+PrivateKey = {{ lookup('file', 'secrets/hwci_net/' + inventory_hostname) }}
+{% if hwci_router == inventory_hostname %}
+ListenPort = 51821
+{% for peer in groups['hwci_net'] if peer != inventory_hostname %}
+
+[Peer]
+PublicKey = {{ lookup('file', 'secrets/hwci_net/' + peer + '.pub') }}
+AllowedIPs = {{ hostvars[peer].hwci_ip }}/32
+PresharedKey = {{ lookup('file', 'secrets/hwci_net/' + peer + '.psk') }}
+{% endfor %}
+{% else %}
+
+[Peer]
+Endpoint = {{ hwci_router }}:51821
+PublicKey = {{ lookup('file', 'secrets/hwci_net/' + hwci_router + '.pub') }}
+AllowedIPs = {{ hostvars[hwci_router].hwci_ip }}/24
+PresharedKey = {{ lookup('file', 'secrets/hwci_net/' + inventory_hostname + '.psk') }}
+PersistentKeepalive = 25
+{% endif %}
+
+# vim: ft=htmldjango :
