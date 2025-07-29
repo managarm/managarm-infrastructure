@@ -5,3 +5,7 @@
     - ansible_support
     - buster_backports
     - hwci_star
+
+- hosts: hades.hosts.managarm.org
+  roles:
+    - hwci_relay

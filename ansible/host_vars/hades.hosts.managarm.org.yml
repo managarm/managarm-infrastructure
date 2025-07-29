@@ -7,6 +7,7 @@ nginx_sites:
   - pkgs.managarm.org # removed, a redirect for now
   - ci.managarm.org # removed, a redirect for now
   - hades.hosts.managarm.org
+  - hwci.managarm.org
 
 nginx_streams:
   - rsync.managarm.org
@@ -37,5 +38,7 @@ docs_modules:
     name: libasync
     description: libasync conceptual overview and API reference
     source: https://github.com/managarm/libasync/tree/master/docs
+
+hwci_virtualenv: "/usr/local/share/hwci/venv"
 
 # vim: sw=2 et :

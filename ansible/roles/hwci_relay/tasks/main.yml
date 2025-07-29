@@ -1,0 +1,53 @@
+---
+- name: Install hwci
+  become: yes
+  become_user: root
+  ansible.builtin.pip:
+    state: latest
+    name:
+      - 'git+https://github.com/managarm/managarm-hwci.git'
+    virtualenv: '{{ hwci_virtualenv }}'
+  notify: hwci_relay_systemd
+
+- name: Install hwci-relay.service
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: "hwci-relay.service.j2"
+    dest: "/etc/systemd/system/hwci-relay.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: hwci_relay_systemd
+
+- name: Make hwci config directory
+  become: yes
+  become_user: root
+  ansible.builtin.file:
+    state: directory
+    path: "/etc/hwci/"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install relay.toml
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: 'conf/hwci/relay_{{ inventory_hostname }}.j2'
+    dest: "/etc/hwci/relay.toml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: hwci_relay_systemd
+
+- name: Install ssh_keys.toml
+  become: yes
+  become_user: root
+  ansible.builtin.template:
+    src: 'conf/hwci/ssh_keys_{{ inventory_hostname }}.j2'
+    dest: "/etc/hwci/ssh_keys.toml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: hwci_relay_systemd

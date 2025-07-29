@@ -1,0 +1,18 @@
+# {{ ansible_managed }}  -*- conf -*-
+[Unit]
+Description=Relay for the hardware CI
+
+[Service]
+Type=simple
+ExecStart={{ hwci_virtualenv }}/bin/python -m hwci_relay --port 10997 --confdir /etc/hwci/
+WorkingDirectory=/var/lib/hwci
+DynamicUser=true
+StateDirectory=hwci
+StateDirectoryMode=0700
+
+StandardInput=null
+StandardOutput=journal
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target

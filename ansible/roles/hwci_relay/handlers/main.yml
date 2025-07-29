@@ -1,0 +1,9 @@
+---
+- name: hwci_relay_systemd
+  become: yes
+  become_user: root
+  ansible.builtin.systemd:
+    name: hwci-relay.service
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
