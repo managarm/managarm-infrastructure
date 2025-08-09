@@ -138,13 +138,10 @@
   become: yes
   become_user: xbbs
   ansible.builtin.cron:
-    name: 'xbbs-project-rotate-{{ item }}'
+    name: 'xbbs-project-rotate'
     minute: '0'
     hour: '21'
-    job: >-
-      cd /var/lib/xbbs/projects/{{ item|quote }} &&
-      chronic /var/lib/xbbs/xbbs_virtualenv/bin/xbbs-rotate-builds
-  loop: "{{ xbbs_cfg.projects }}"
+    job: chronic /var/lib/xbbs/xbbs_virtualenv/bin/xbbs-rotate-builds
 
 - name: Run weekly full rebuilds
   become: yes
