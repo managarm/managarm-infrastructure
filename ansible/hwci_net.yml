@@ -1,6 +1,6 @@
 ---
-- hosts: 'hwci_net:!crius.hosts.managarm.org'
-  # ^ remove exclude when Crius becomes reachable through the inventory
+- hosts: 'hwci_net:!crius.hosts.managarm.org:!oceanus.hosts.managarm.org'
+  # ^ remove exclude when Crius and Oceanus becomes reachable through the inventory
   roles:
     - ansible_support
     - buster_backports
