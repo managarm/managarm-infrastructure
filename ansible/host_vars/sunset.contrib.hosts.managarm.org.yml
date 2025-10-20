@@ -1,2 +1,3 @@
 # Different SSH port.
 ansible_port: 8123
+should_build_heavy_packages: true
