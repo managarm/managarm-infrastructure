@@ -4,9 +4,15 @@
   become_user: xbbs
   xbbs_support_facts: ~
 
+- name: Check for the existence of the unprivileged_userns_clone sysctl
+  ansible.builtin.stat:
+    path: /proc/sys/kernel/unprivileged_userns_clone
+  register: u_uns_clone
+
 - name: Enable usernses on Debian
   become: yes
   become_user: root
+  when: u_uns_clone.stat.exists
   ansible.posix.sysctl:
     name: 'kernel.unprivileged_userns_clone'
     value: '1'
@@ -24,12 +30,6 @@
       - y4
     virtualenv: '{{ xbbs_virtualenv }}'
   notify: xbbs_worker
-
-- name: Install libguestfs
-  become: yes
-  become_user: root
-  ansible.builtin.apt:
-    pkg: libguestfs-tools
 
 - name: Install systemd service files
   become: yes

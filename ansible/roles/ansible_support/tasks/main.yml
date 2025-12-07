@@ -1,8 +1,15 @@
 ---
-- name: Install acl utils
+- name: Install acl utils (Debian)
   become: yes
   become_user: root
+  when: ansible_facts['os_family'] == "Debian"
   ansible.builtin.apt:
     pkg: ["acl", "iproute2"]
+- name: Install acl utils (SUSE)
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == "Suse"
+  community.general.zypper:
+    name: ["acl", "iproute2"]
 
 # vim: sw=2 et :

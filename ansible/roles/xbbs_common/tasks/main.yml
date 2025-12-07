@@ -1,7 +1,8 @@
 ---
-- name: Install packages needed to run xbstrap or its deps
+- name: Install packages needed to run xbstrap or its deps (Debian)
   become: yes
   become_user: root
+  when: ansible_facts['os_family'] == "Debian"
   ansible.builtin.apt:
     install_recommends: yes
     pkg:
@@ -11,6 +12,21 @@
       - python3-dev
       - python3-pip
       - python3-virtualenv
+      - moreutils
+      - mercurial
+      - subversion
+- name: Install packages needed to run xbstrap or its deps (SUSE)
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == "Suse"
+  ansible.builtin.zypper:
+    name:
+      - git
+      - pattern:devel_C_C++
+      - python{{ python_version }}
+      - python{{ python_version }}-devel
+      - python{{ python_version }}-pip
+      - python{{ python_version }}-virtualenv
       - moreutils
       - mercurial
       - subversion

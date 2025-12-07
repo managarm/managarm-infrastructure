@@ -1,0 +1,8 @@
+should_build_heavy_packages: true
+
+# Only accessible via WG
+ansible_ssh_extra_args: '-J hades.hosts.managarm.org'
+ansible_ssh_host: '{{ wg_ip }}'
+
+# Needed because SUSE is kinda strange
+python_version: 313

@@ -6,7 +6,7 @@ sunset.contrib.hosts.managarm.org
 # raptor.dennisbonke.com
 # tictac.aarsen.me
 bearservers.net
-chopin.mrvn.sh
+grieg.mrvn.sh
 fuji.that-wont.work
 
 [wg_worknet]
@@ -15,7 +15,7 @@ sunset.contrib.hosts.managarm.org wg_ip=10.0.69.2
 raptor.dennisbonke.com wg_ip=10.0.69.3
 tictac.aarsen.me wg_ip=10.0.69.4
 bearservers.net wg_ip=10.0.69.5
-chopin.mrvn.sh wg_ip=10.0.69.6
+grieg.mrvn.sh wg_ip=10.0.69.6
 fuji.that-wont.work wg_ip=10.0.69.7
 
 [wg_worknet:vars]
