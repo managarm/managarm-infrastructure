@@ -38,6 +38,10 @@ docs_modules:
     name: libasync
     description: libasync conceptual overview and API reference
     source: https://github.com/managarm/libasync/tree/master/docs
+  - path: mlibc-book
+    name: mlibc User Guide
+    description: A user guide for operating system vendors using mlibc
+    source: https://github.com/managarm/mlibc/tree/master/book
 
 hwci_virtualenv: "/usr/local/share/hwci/venv"
 
