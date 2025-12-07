@@ -1,6 +1,10 @@
 [Interface]
 Address = {{ wg_ip }}
 PrivateKey = {{ lookup('file', 'secrets/wg/' + inventory_hostname) }}
+{% if wg_mtu is defined %}
+MTU = {{ wg_mtu }}
+{% endif %}
+
 {% if wgstar_router == inventory_hostname %}
 ListenPort = 51820
 PostUp = sysctl -w net.ipv4.conf.%i.forwarding=1
