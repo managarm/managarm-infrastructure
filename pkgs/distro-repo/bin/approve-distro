@@ -84,10 +84,11 @@ def split_chunks(l, k):
 		yield c
 
 def main(args):
-	os.environ["XBPS_ARCH"] = cpu_arch = "x86_64"
+	os.environ["XBPS_ARCH"] = cpu_arch = args.architecture
 	conf = toml.load('/etc/approve-distro.toml')
 	secret = toml.load('/etc/approve-distro.secret.toml')
-	project_dir = conf['repositories']['project_dir']
+	repo_obj = conf['repositories'][cpu_arch]
+	project_dir = repo_obj['project_dir']
 
 	latest_build = find_latest_build(project_dir)
 	if latest_build is None:
@@ -127,18 +128,18 @@ def main(args):
 	for pkg in pkgs:
 		# Copy the file.
 		src_path = os.path.join(repository, pkg.xbps_file)
-		dest_path = os.path.join(conf['repositories']['distro_path'], pkg.xbps_file)
+		dest_path = os.path.join(repo_obj['distro_path'], pkg.xbps_file)
 		shutil.copyfile(src_path, dest_path)
 
 	# Update the repository.
-	all_dest_paths = [os.path.join(conf['repositories']['distro_path'], pkg.xbps_file) for pkg in pkgs];
+	all_dest_paths = [os.path.join(repo_obj['distro_path'], pkg.xbps_file) for pkg in pkgs];
 	subprocess.check_call(['xbps-rindex', '-a'] + all_dest_paths)
 	subprocess.check_call(['xbps-rindex',
-			'--signedby', conf['repositories']['signer'],
-			'--privkey', conf['repositories']['private_key'],
-			'-s', conf['repositories']['distro_path']])
+			'--signedby', repo_obj['signer'],
+			'--privkey', repo_obj['private_key'],
+			'-s', repo_obj['distro_path']])
 	subprocess.check_call(['xbps-rindex',
-			'--privkey', conf['repositories']['private_key'],
+			'--privkey', repo_obj['private_key'],
 			'-S'] + all_dest_paths)
 
 	# Send a webhook.
@@ -149,12 +150,12 @@ def main(args):
 				{
 					'type': 'rich',
 					'title': 'Package updated: {} is now at {}'.format(pkg.name, pkg.version),
-					'url': urljoin(conf['repositories']['distro_url'], pkg.xbps_file),
+					'url': urljoin(repo_obj['distro_url'], pkg.xbps_file),
 					'timestamp': timestamp,
 					'author': dict(name=realname),
 					'fields': [
 						dict(name='Architecture',
-						     value='x86_64'),
+						     value=cpu_arch),
 						dict(name='Maintainer email',
 						     value=email)
 					]
@@ -164,6 +165,7 @@ def main(args):
 		})
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--architecture', '-a', default="x86_64")
 parser.add_argument('pkgs', type=str, nargs='+')
 main(parser.parse_args())
 

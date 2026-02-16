@@ -9,25 +9,75 @@ _approve_distro_completions_present() {
 	return 1
 }
 
+_approve_distro_get_arch_flag() {
+	local arch=x86_64
+	local -a a
+
+	# preprocess args into getopt for reordering and stuff
+	local t=$(getopt -q -o a: -l architecture: -- "${@}")
+	# note that we ignore the error code from getopt.  we don't care about
+	# invalid options here.
+
+	# put them in an array.  getopt emits quoted code.
+	eval a=( "${t}" )
+
+	# dig out the arch flags.
+	local i
+	for ((i=0; "${i}" < "${#a[@]}"; i++)); do
+		case "${a[i]}" in
+			-a|--architecture)
+				arch="${a[i+1]}"
+				: "$((i++))"
+				;;
+			--) break ;;
+			*) ;;
+		esac
+	done
+
+	echo "${arch}"
+}
+
+_approve_distro_generate_arch_list() {
+	python3 -c '
+import toml
+import shlex
+import os
+
+with open("/etc/approve-distro.toml", "r") as f:
+	repos_top = toml.load(f).get("repositories", {})
+	print(" ".join(repos_top))
+'
+}
+
 _approve_distro_completions() {
-	local x
-	options=""
-	src=
-	dst=
+	if [[ "${COMP_WORDS[${COMP_CWORD}-1]}" == -a \
+	      || "${COMP_WORDS[${COMP_CWORD}-1]}" == --architecture ]]; then
+		COMPREPLY+=(
+			$(compgen -W "$(_approve_distro_generate_arch_list)" \
+				  -- "${COMP_WORDS[${COMP_CWORD}]}")
+		)
+		return
+	fi
+	local -x arch="$(_approve_distro_get_arch_flag "${COMP_WORDS[@]}")"
+	local options=""
+	local dst= project_dir=
 	eval "$(python3 -c '
 import toml
 import shlex
+import os
 
 with open("/etc/approve-distro.toml", "r") as f:
-	repos = toml.load(f).get("repositories", {})
+	repos_top = toml.load(f).get("repositories", {})
+	repos = repos_top.get(os.getenv("arch"), {})
 	print("project_dir=" + shlex.quote(repos.get("project_dir", "")))
 	print("dst=" + shlex.quote(repos.get("distro_path", "")))
 ')"
 	[ "$project_dir" ] || return
-	latest="$(printf '%s\n' "$project_dir"/*T* | sort -r | head -n1)"
+	local latest="$(printf '%s\n' "$project_dir"/*T* | sort -r | head -n1)"
 	[ "$latest" ] || return
-	src="$latest/repo/packages/x86_64/"
-	for x in "-h" "$src"/*.xbps; do
+	local src="$latest/repo/packages/${arch}/"
+	local x
+	for x in "-a" "-h" "$src"/*.xbps; do
 		if [[ "$src/*.xbps" = $x ]]; then continue; fi
 		x="${x##*/}"
 		x="${x%.xbps}"
@@ -43,3 +93,9 @@ with open("/etc/approve-distro.toml", "r") as f:
 }
 
 complete -F _approve_distro_completions approve-distro
+
+# Local Variables:
+# sh-basic-offset: 8
+# tab-width: 8
+# indent-tabs-mode: t
+# End:

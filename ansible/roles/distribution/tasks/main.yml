@@ -3,6 +3,7 @@
   become: yes
   ansible.builtin.apt:
     pkg:
+      - util-linux
       - stow
       - python3-pip
 
@@ -105,10 +106,11 @@
   become: yes
   ansible.builtin.file:
     state: directory
-    path: /var/www/repos/amd64
+    path: '/var/www/repos/{{ item }}'
     owner: distribution
     group: distribution
     mode: 0755
+  loop: [amd64, aarch64]
 
 - name: Copy shell alias
   become: yes
