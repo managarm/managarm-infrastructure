@@ -106,11 +106,11 @@
   become: yes
   ansible.builtin.file:
     state: directory
-    path: '/var/www/repos/{{ item }}'
+    path: '/var/www/repos/repos/{{ item }}'
     owner: distribution
     group: distribution
     mode: 0755
-  loop: [amd64, aarch64]
+  loop: [amd64, aarch64, riscv64]
 
 - name: Copy shell alias
   become: yes
