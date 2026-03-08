@@ -9,5 +9,10 @@ server {
 		proxy_pass              http://{{ xbbs_cfg.web_bind }};
 	}
 
+        location /int_coord_root/ {
+            internal;
+            alias /var/lib/xbbs/;
+        }
+
 	{{ h.ssl_keys("builds.managarm.org") }}
 }
