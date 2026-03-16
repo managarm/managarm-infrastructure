@@ -22,6 +22,7 @@ xbbs_cfg:
     managarm/fafnir: [managarm, managarm_aarch64, managarm_riscv64]
     managarm/cxxshim: [managarm, managarm_aarch64, managarm_riscv64]
     managarm/bootstrap-managarm: [managarm, managarm_aarch64, managarm_riscv64]
+    managarm/linux-mlibc: [linux_mlibc]
   distrib_repos:
     managarm: /var/www/repos/repos/amd64
     managarm_aarch64: /var/www/repos/repos/aarch64
