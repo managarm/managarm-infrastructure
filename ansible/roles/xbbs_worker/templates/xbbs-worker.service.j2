@@ -5,7 +5,8 @@ Description=xbbs worker
 User=xbbs
 Group=xbbs
 ExecStart=/bin/sh -xec '. '{{ xbbs_virtualenv|quote }}/bin/activate'; exec xbbs-worker'
-Environment=XBSTRAP_HOME={{ xbbs_cfg.xbstrap_home }}
+CacheDirectory=xbbs xbbs/xbstrap
+Environment=XBSTRAP_HOME={{ xbbs_cfg.xbstrap_home }} XBSTRAP_CACHE_DIR=%C/xbbs/xbstrap
 
 SupplementaryGroups=kvm
 

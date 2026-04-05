@@ -5,6 +5,8 @@ Description=xbbs coordinator
 User=xbbs
 Group=xbbs
 ExecStart=/bin/sh -xec '. '{{ xbbs_virtualenv|quote }}/bin/activate'; exec xbbs-coordinator'
+CacheDirectory=xbbs xbbs/xbstrap
+Environment=XBSTRAP_CACHE_DIR=%C/xbbs/xbstrap
 
 [Install]
 WantedBy=default.target
