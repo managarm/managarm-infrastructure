@@ -86,9 +86,9 @@
   become: yes
   become_user: xbbs
   ansible.builtin.get_url:
-    url: "https://github.com/managarm/cbuildrt/releases/download/v0.1.1/cbuildrt-linux-x86_64-static.tar"
+    url: "https://github.com/managarm/cbuildrt/releases/download/v0.1.4/cbuildrt-linux-x86_64-static.tar"
     dest: "{{ xbbs_cfg.xbstrap_home }}/cbuildrt-linux-amd64-static.tar"
-    checksum: "sha256:64024a5fb00d18e890131eaf66aef074d979fdb6dcc82b2b431bbb5e9513fff4"
+    checksum: "sha256:87659bb1d1ae100649d54a19b5ebc76496de36303e0ed6258efe031096e42042"
     mode: 0644
 
 - name: Unarchive cbuildrt
