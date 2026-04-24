@@ -63,6 +63,12 @@
     virtualenv: '{{ xbbs_virtualenv }}'
   notify: xbbs_worker
 
+- name: Install debootstrap using xbstrap
+  become: yes
+  become_user: xbbs
+  ansible.builtin.command:
+    cmd: "env XBSTRAP_HOME={{ xbbs_cfg.xbstrap_home|quote }} {{ xbbs_virtualenv|quote }}/bin/xbstrap prereqs debootstrap"
+
 - name: Install systemd service files
   become: yes
   become_user: root
