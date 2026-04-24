@@ -18,6 +18,38 @@
     value: '1'
     sysctl_set: yes
 
+- name: Check if worker user has subuids already
+  ansible.builtin.command:
+    cmd: "grep -c '^xbbs:' /etc/subuid"
+  register: subuid_check
+  changed_when: false
+  failed_when: subuid_check.rc > 1
+
+- name: Give it subuids
+  become: yes
+  become_user: root
+  ansible.builtin.shell: |
+    set -xe
+    nf=$(awk -F: 'START { nf = 0 } { u=$2+$3; if (nf < u) nf = u } END { print nf }' /etc/subuid)
+    usermod --add-subuids ${nf}-$((nf+65535)) xbbs
+  when: subuid_check.stdout == "0"
+
+- name: Check if worker user has subgids already
+  ansible.builtin.command:
+    cmd: "grep -c '^xbbs:' /etc/subgid"
+  register: subgid_check
+  changed_when: false
+  failed_when: subgid_check.rc > 1
+
+- name: Give it subgids
+  become: yes
+  become_user: root
+  ansible.builtin.shell: |
+    set -xe
+    nf=$(awk -F: 'START { nf = 0 } { u=$2+$3; if (nf < u) nf = u } END { print nf }' /etc/subgid)
+    usermod --add-subgids ${nf}-$((nf+65535)) xbbs
+  when: subgid_check.stdout == "0"
+
 - name: Install xbstrap and xbbs from git
   become: yes
   become_user: root
