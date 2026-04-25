@@ -46,7 +46,7 @@
   become_user: root
   ansible.builtin.shell: |
     set -xe
-    nf=$(awk -F: 'START { nf = 0 } { u=$2+$3; if (nf < u) nf = u } END { print nf }' /etc/subuid)
+    nf=$(awk -F: 'START { nf = 100000 } { u=$2+$3; if (nf < u) nf = u } END { print nf }' /etc/subuid)
     usermod --add-subuids ${nf}-$((nf+65535)) xbbs
   when: subuid_check.stdout == "0"
 
@@ -62,7 +62,7 @@
   become_user: root
   ansible.builtin.shell: |
     set -xe
-    nf=$(awk -F: 'START { nf = 0 } { u=$2+$3; if (nf < u) nf = u } END { print nf }' /etc/subgid)
+    nf=$(awk -F: 'START { nf = 100000  } { u=$2+$3; if (nf < u) nf = u } END { print nf }' /etc/subgid)
     usermod --add-subgids ${nf}-$((nf+65535)) xbbs
   when: subgid_check.stdout == "0"
 
