@@ -1,1 +1,2 @@
 ansible_ssh_host: '82.165.106.248'
+should_build_heavy_packages: true
