@@ -16,6 +16,7 @@ rsyncd_modules:
   - docs
   - cbuildrt
   - buildenv
+  - imagerepo
 
 acme_domains: "{{ nginx_sites + nginx_streams }}"
 acme_units:

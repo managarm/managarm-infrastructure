@@ -120,6 +120,7 @@
     - repos/pinned
     - repos/cbuildrt
     - repos/buildenv
+    - repos/images
     - zeus
     - hades
 
